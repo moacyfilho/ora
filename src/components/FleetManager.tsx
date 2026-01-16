@@ -247,7 +247,7 @@ const FleetManager = () => {
                         </div>
                       ) : (
                         <button className="icon-btn" onClick={() => setConfirmDeleteId(car.id)} title="Excluir">
-                          <Trash2 size={18} color="rgba(255,255,255,0.4)" className="trash-icon" />
+                          <Trash2 size={18} color="var(--error)" className="trash-icon" style={{ opacity: 0.6 }} />
                         </button>
                       )}
                     </div>
@@ -442,7 +442,8 @@ const FleetManager = () => {
           color: var(--primary);
         }
         .actions { display: flex; gap: 1rem; }
-        .actions .trash-icon:hover { color: var(--error); opacity: 1; }
+        .actions .trash-icon { transition: all 0.2s; }
+        .actions .trash-icon:hover { color: var(--error) !important; opacity: 1 !important; transform: scale(1.2); }
         .icon-btn:hover { color: white; transform: scale(1.1); }
         .empty-state {
           grid-column: 1 / -1;
