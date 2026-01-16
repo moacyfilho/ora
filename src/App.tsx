@@ -7,7 +7,8 @@ import {
   Users,
   CreditCard,
   X,
-  Plus
+  Plus,
+  Menu
 } from 'lucide-react';
 import Dashboard from './components/Dashboard.tsx';
 import FleetManager from './components/FleetManager.tsx';
@@ -95,6 +96,9 @@ function App() {
       {/* Main Content */}
       <main className="main-content">
         <header className="top-header">
+          <button className="menu-btn" onClick={() => setIsSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
           <div className="mobile-logo">
             <Car size={24} color="var(--primary)" />
             <span className="gradient-text">ORA</span>
@@ -301,21 +305,38 @@ function App() {
 
         @media (max-width: 1024px) {
           .sidebar {
-            display: none; /* Hide sidebar completely on mobile in favor of bottom nav */
+            display: flex;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            transform: translateX(-100%);
+            width: 85%;
+            max-width: 300px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+          }
+
+          .sidebar.open {
+            transform: translateX(0);
           }
           
           .top-header {
-            padding: 0 1.5rem;
+            padding: 0 1rem;
             height: 70px;
           }
 
           .content-area {
             padding: 1rem;
-            padding-bottom: 100px; /* Increased space for bottom nav to prevent overlap */
+            padding-bottom: 2rem;
           }
 
           .menu-btn {
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin-right: 0.5rem;
           }
 
           .mobile-logo {
@@ -324,45 +345,11 @@ function App() {
             gap: 0.5rem;
             font-weight: 800;
             font-size: 1.2rem;
+            margin-right: auto;
           }
 
           .bottom-nav {
-            display: flex;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 25, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--surface-border);
-            padding: 0.6rem 0.5rem;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 9999; /* Ensure it stays on top but check z-index of modals */
-            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-          }
-
-          .bottom-nav-item {
-            background: none;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.2rem;
-            color: var(--text-dim);
-            font-size: 0.65rem;
-            font-weight: 500;
-            transition: 0.2s;
-            padding: 0.2rem;
-          }
-
-          .bottom-nav-item.active {
-            color: var(--primary);
-          }
-
-          .bottom-nav-item.active svg {
-            filter: drop-shadow(0 0 8px var(--primary-glow));
+            display: none !important;
           }
         }
 
