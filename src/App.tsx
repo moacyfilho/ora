@@ -44,13 +44,20 @@ function App() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      alert("Para instalar no iPhone/iPad:\n1. Toque no botão de Compartilhar\n2. Escolha 'Adicionar à Tela de Início'\n\nNo Android, se não aparecer automático, verifique as opções do navegador.");
-      return;
+    console.log("Install button clicked");
+    try {
+      if (!deferredPrompt) {
+        alert("⚠️ Instalação Manual Necessária:\n\n📱 iPhone/iPad: Toque em 'Compartilhar' le 'Adicionar à Tela de Início'.\n\n🤖 Android: Se não abriu nada, toque nos 3 pontinhos do navegador e procure 'Instalar aplicativo'.");
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log("Install outcome:", outcome);
+      setDeferredPrompt(null);
+    } catch (err) {
+      console.error("Install error:", err);
+      alert("Erro ao tentar instalar. Tente pelos menus do navegador.");
     }
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setDeferredPrompt(null);
   };
 
   if (!isAuthenticated) {
@@ -105,7 +112,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v2.4 READY</p>
+              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.0 PWA FIX</p>
             </div>
             <button
               className="logout-btn"
