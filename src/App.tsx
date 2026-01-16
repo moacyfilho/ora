@@ -122,7 +122,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.2 MANIFEST FIX</p>
+              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.3 CLEAN</p>
             </div>
             <button
               className="logout-btn"
@@ -168,10 +168,7 @@ function App() {
             <span className="gradient-text">ORA</span>
           </div>
           <div className="header-actions">
-            <button className="btn-secondary" onClick={handleInstallClick} style={{ padding: '0.6rem', border: '1px solid var(--primary)' }}>
-              <Download size={18} />
-              <span style={{ fontSize: '0.8rem' }}>Instalar App</span>
-            </button>
+
             <button className="btn-primary" onClick={() => setIsNewRentalModalOpen(true)}>
               <Plus size={18} />
               <span>Novo Aluguel</span>
