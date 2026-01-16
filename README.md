@@ -1,6 +1,7 @@
 # 🚗 ORA - Sistema de Gestão de Frota
 
 O **ORA** é uma plataforma moderna e responsiva para aluguel e gestão de veículos, desenvolvida com tecnologia de ponta para otimizar o controle da sua frota.
+**Novidade v2.1:** Suporte total a instalação em celulares (PWA).
 
 ## ✨ Funcionalidades Principais
 
