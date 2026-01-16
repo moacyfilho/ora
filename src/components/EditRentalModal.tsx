@@ -75,6 +75,7 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                                 required
                                 value={formData.start_date}
                                 onChange={e => setFormData({ ...formData, start_date: e.target.value })}
+                                onClick={(e) => (e.target as any).showPicker?.()}
                             />
                         </div>
 
@@ -85,6 +86,7 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                                 required
                                 value={formData.end_date}
                                 onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                                onClick={(e) => (e.target as any).showPicker?.()}
                             />
                         </div>
 

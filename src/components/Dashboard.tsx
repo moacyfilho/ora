@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { TrendingUp, Users, Car, AlertCircle } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -9,9 +11,11 @@ const Dashboard = () => {
     availableCars: 0,
     pendingMaintenance: 0
   });
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     fetchStats();
+    fetchRecentActivities();
   }, []);
 
   const fetchStats = async () => {
@@ -19,7 +23,6 @@ const Dashboard = () => {
     const { count: carCount } = await supabase.from('cars').select('*', { count: 'exact', head: true }).eq('status', 'available');
     const { count: maintCount } = await supabase.from('cars').select('*', { count: 'exact', head: true }).eq('status', 'maintenance');
 
-    // Calculate total revenue from rentals (sum of paid_amount)
     const { data: revenueData } = await supabase.from('rentals').select('paid_amount');
     const totalRev = revenueData?.reduce((acc, curr) => acc + (Number(curr.paid_amount) || 0), 0) || 0;
 
@@ -29,6 +32,41 @@ const Dashboard = () => {
       availableCars: carCount || 0,
       pendingMaintenance: maintCount || 0
     });
+  };
+
+  const fetchRecentActivities = async () => {
+    // Fetch last 3 rentals
+    const { data: recentRentals } = await supabase
+      .from('rentals')
+      .select('*, cars(model, brand), customers(full_name)')
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    // Fetch last 3 maintenance logs
+    const { data: recentMaint } = await supabase
+      .from('maintenance_logs')
+      .select('*, cars(model, brand)')
+      .order('date', { ascending: false })
+      .limit(3);
+
+    const combined = [
+      ...(recentRentals || []).map(r => ({
+        id: r.id,
+        type: 'rental',
+        title: `${r.cars?.brand} ${r.cars?.model}`,
+        subtitle: `Alugado para ${r.customer_name || r.customers?.full_name}`,
+        date: new Date(r.created_at)
+      })),
+      ...(recentMaint || []).map(m => ({
+        id: m.id,
+        type: 'maintenance',
+        title: `MANUTENÇÃO: ${m.cars?.brand} ${m.cars?.model}`,
+        subtitle: m.description,
+        date: new Date(m.date)
+      }))
+    ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 5);
+
+    setActivities(combined);
   };
 
   const StatCard = ({ title, value, icon: Icon, trend }: any) => (
@@ -111,16 +149,22 @@ const Dashboard = () => {
         </div>
         <div className="glass-card recent-list">
           <h3>Atividade Recente</h3>
-          <div className="activity-item">
-            <div className="bullet"></div>
-            <p><strong>Fiat Argo</strong> alugado para João Silva</p>
-            <span>Há 2h</span>
-          </div>
-          <div className="activity-item">
-            <div className="bullet maintenance"></div>
-            <p><strong>REVISÃO:</strong> Toyota Corolla agendada</p>
-            <span>Há 5h</span>
-          </div>
+          {activities.length === 0 ? (
+            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginTop: '1rem' }}>
+              Nenhuma atividade recente.
+            </p>
+          ) : (
+            activities.map((activity) => (
+              <div key={activity.id} className="activity-item">
+                <div className={`bullet ${activity.type === 'maintenance' ? 'maintenance' : ''}`}></div>
+                <p>
+                  <strong>{activity.title}</strong><br />
+                  <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{activity.subtitle}</span>
+                </p>
+                <span>{formatDistanceToNow(activity.date, { addSuffix: true, locale: ptBR })}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

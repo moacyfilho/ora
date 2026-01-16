@@ -155,6 +155,7 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                                 required
                                 value={formData.start_date}
                                 onChange={e => setFormData({ ...formData, start_date: e.target.value })}
+                                onClick={(e) => (e.target as any).showPicker?.()}
                             />
                         </div>
 
@@ -165,6 +166,7 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                                 required
                                 value={formData.end_date}
                                 onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                                onClick={(e) => (e.target as any).showPicker?.()}
                             />
                         </div>
 

@@ -70,6 +70,7 @@ export const EditMaintenanceModal = ({ isOpen, onClose, onSuccess, log }: EditMa
                                 required
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
+                                onClick={(e) => (e.target as any).showPicker?.()}
                             />
                         </div>
                         <div className="input-group">
