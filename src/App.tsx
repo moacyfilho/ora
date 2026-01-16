@@ -67,9 +67,9 @@ function App() {
 
         <div className="sidebar-footer">
           <div className="user-profile">
-            <div className="avatar">AD</div>
+            <div className="avatar">OT</div>
             <div className="info">
-              <p className="name">Administrador</p>
+              <p className="name">Otávio</p>
               <p className="role">Pro Manager</p>
             </div>
             <button

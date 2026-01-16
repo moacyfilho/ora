@@ -16,7 +16,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
         // Simulação de delay para efeito visual premium
         setTimeout(() => {
-            if (password === 'admin123') {
+            if (password === 'Jordan31@') {
                 onLogin(password);
             } else {
                 setError(true);
@@ -43,7 +43,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                         <input
                             type="text"
                             placeholder="Usuário"
-                            value="admin"
+                            value="Ot@vio2026"
                             disabled
                         />
                     </div>
