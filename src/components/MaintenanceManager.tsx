@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Plus, DollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Plus, DollarSign, AlertTriangle, CheckCircle, Trash2, Settings2 } from 'lucide-react';
+import { NewMaintenanceModal } from './NewMaintenanceModal';
+import { EditMaintenanceModal } from './EditMaintenanceModal';
 
 const MaintenanceManager = () => {
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+    const [editingLog, setEditingLog] = useState<any | null>(null);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+    const [summary, setSummary] = useState({ totalCost: 0, pendingRevisions: 0 });
 
     useEffect(() => {
         fetchLogs();
@@ -16,8 +22,22 @@ const MaintenanceManager = () => {
             .select('*, cars(model, brand, license_plate)')
             .order('date', { ascending: false });
 
-        if (data) setLogs(data);
+        if (data) {
+            setLogs(data);
+            const total = data.reduce((acc, log) => acc + (log.cost || 0), 0);
+            setSummary({ totalCost: total, pendingRevisions: data.length }); // Placeholder logic for pending
+        }
         setLoading(false);
+    };
+
+    const handleDeleteMaintenance = async (id: string) => {
+        const { error } = await supabase.from('maintenance_logs').delete().eq('id', id);
+        if (!error) {
+            fetchLogs();
+            setConfirmDeleteId(null);
+        } else {
+            alert('Erro ao excluir manutenção: ' + error.message);
+        }
     };
 
     return (
@@ -27,7 +47,7 @@ const MaintenanceManager = () => {
                     <h2>Gestão de Manutenções</h2>
                     <p>Histórico de revisões e manutenções preventivas/corretivas.</p>
                 </div>
-                <button className="btn-primary">
+                <button className="btn-primary" onClick={() => setIsNewModalOpen(true)}>
                     <Plus size={18} />
                     <span>Registrar Manutenção</span>
                 </button>
@@ -44,8 +64,8 @@ const MaintenanceManager = () => {
                 <div className="glass-card mini-stat">
                     <DollarSign size={20} color="var(--primary)" />
                     <div>
-                        <p className="label">Gasto Total (Mês)</p>
-                        <h3>R$ 1.250,00</h3>
+                        <p className="label">Gasto Total (Histórico)</p>
+                        <h3>R$ {summary.totalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h3>
                     </div>
                 </div>
             </div>
@@ -60,6 +80,7 @@ const MaintenanceManager = () => {
                             <th>Tipo</th>
                             <th>Custo</th>
                             <th>Status</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,12 +111,42 @@ const MaintenanceManager = () => {
                                             Concluído
                                         </span>
                                     </td>
+                                    <td className="actions-cell">
+                                        <div className="delete-container">
+                                            {confirmDeleteId === log.id ? (
+                                                <div className="confirm-actions animate-fade-in">
+                                                    <button className="confirm-yes" onClick={() => handleDeleteMaintenance(log.id)}>S</button>
+                                                    <button className="confirm-no" onClick={() => setConfirmDeleteId(null)}>N</button>
+                                                </div>
+                                            ) : (
+                                                <button className="icon-btn" onClick={() => setConfirmDeleteId(log.id)} title="Excluir">
+                                                    <Trash2 size={16} color="var(--error)" />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <button className="icon-btn" onClick={() => setEditingLog(log)} title="Editar">
+                                            <Settings2 size={16} />
+                                        </button>
+                                    </td>
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </table>
             </div>
+
+            <NewMaintenanceModal
+                isOpen={isNewModalOpen}
+                onClose={() => setIsNewModalOpen(false)}
+                onSuccess={fetchLogs}
+            />
+
+            <EditMaintenanceModal
+                isOpen={!!editingLog}
+                onClose={() => setEditingLog(null)}
+                onSuccess={fetchLogs}
+                log={editingLog}
+            />
 
             <style>{`
         .maintenance-container {
@@ -141,6 +192,36 @@ const MaintenanceManager = () => {
           font-weight: 600;
         }
         .plate { font-size: 0.75rem; color: var(--primary); font-family: monospace; }
+        
+        .actions-cell {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+        }
+        .icon-btn {
+          background: none;
+          border: none;
+          color: var(--text-dim);
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .icon-btn:hover { color: white; transform: scale(1.1); }
+        
+        .delete-container { min-width: 40px; display: flex; justify-content: center; }
+        .confirm-actions { display: flex; gap: 0.3rem; }
+        .confirm-yes, .confirm-no {
+          border: none;
+          border-radius: 4px;
+          padding: 0.2rem 0.5rem;
+          font-size: 0.7rem;
+          font-weight: 700;
+          cursor: pointer;
+        }
+        .confirm-yes { background: var(--error); color: white; }
+        .confirm-no { background: var(--surface-border); color: white; }
       `}</style>
         </div>
     );
