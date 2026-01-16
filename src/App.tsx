@@ -29,13 +29,11 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewRentalModalOpen, setIsNewRentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(true); // Default to true to show button for manual instruction
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setIsInstallable(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -51,10 +49,7 @@ function App() {
       return;
     }
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setIsInstallable(false);
-    }
+    await deferredPrompt.userChoice;
     setDeferredPrompt(null);
   };
 
@@ -110,18 +105,16 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role">Pro Manager</p>
+              <p className="role">Pro Manager v1.1</p>
             </div>
-            {isInstallable && (
-              <button
-                className="logout-btn"
-                onClick={handleInstallClick}
-                title="Instalar App"
-                style={{ marginRight: '0.5rem', background: 'rgba(0, 229, 255, 0.1)', color: 'var(--primary)' }}
-              >
-                <Download size={18} />
-              </button>
-            )}
+            <button
+              className="logout-btn"
+              onClick={handleInstallClick}
+              title="Instalar App"
+              style={{ marginRight: '0.5rem', background: 'rgba(0, 229, 255, 0.1)', color: 'var(--primary)' }}
+            >
+              <Download size={18} />
+            </button>
             <button
               className="logout-btn"
               onClick={() => setIsAuthenticated(false)}
@@ -150,12 +143,10 @@ function App() {
             <span className="gradient-text">ORA</span>
           </div>
           <div className="header-actions">
-            {isInstallable && (
-              <button className="btn-secondary" onClick={handleInstallClick} style={{ padding: '0.6rem', border: '1px solid var(--primary)' }}>
-                <Download size={18} />
-                <span style={{ fontSize: '0.8rem' }}>Instalar App</span>
-              </button>
-            )}
+            <button className="btn-secondary" onClick={handleInstallClick} style={{ padding: '0.6rem', border: '1px solid var(--primary)' }}>
+              <Download size={18} />
+              <span style={{ fontSize: '0.8rem' }}>Instalar App</span>
+            </button>
             <button className="btn-primary" onClick={() => setIsNewRentalModalOpen(true)}>
               <Plus size={18} />
               <span>Novo Aluguel</span>
