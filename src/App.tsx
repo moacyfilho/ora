@@ -29,7 +29,7 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewRentalModalOpen, setIsNewRentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstallable, setIsInstallable] = useState(true); // Default to true to show button for manual instruction
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -46,7 +46,10 @@ function App() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      alert("Para instalar no iPhone/iPad:\n1. Toque no botão de Compartilhar\n2. Escolha 'Adicionar à Tela de Início'\n\nNo Android, se não aparecer automático, verifique as opções do navegador.");
+      return;
+    }
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
