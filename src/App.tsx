@@ -17,13 +17,20 @@ import CustomerManager from './components/CustomerManager.tsx';
 import MaintenanceManager from './components/MaintenanceManager.tsx';
 import BillingManager from './components/BillingManager.tsx';
 import { NewRentalModal } from './components/NewRentalModal.tsx';
+import Login from './components/Login.tsx';
+import { LogOut } from 'lucide-react';
 
 type View = 'dashboard' | 'fleet' | 'rentals' | 'customers' | 'maintenance' | 'billing';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewRentalModalOpen, setIsNewRentalModalOpen] = useState(false);
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   const NavItem = ({ name, icon: Icon, id }: { name: string, icon: any, id: View }) => (
     <button
@@ -65,6 +72,13 @@ function App() {
               <p className="name">Administrador</p>
               <p className="role">Pro Manager</p>
             </div>
+            <button
+              className="logout-btn"
+              onClick={() => setIsAuthenticated(false)}
+              title="Sair do Sistema"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         </div>
       </aside>
@@ -205,6 +219,27 @@ function App() {
         .info .role {
           font-size: 0.75rem;
           color: var(--text-dim);
+        }
+
+        .logout-btn {
+          margin-left: auto;
+          background: rgba(255, 61, 113, 0.1);
+          border: none;
+          color: var(--error);
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+          background: var(--error);
+          color: white;
+          transform: scale(1.1);
         }
 
         .main-content {
