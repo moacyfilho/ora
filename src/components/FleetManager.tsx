@@ -182,13 +182,19 @@ const FleetManager = () => {
                 <img
                   src={(() => {
                     const m = car.model.toLowerCase();
-                    const b = car.brand.toLowerCase();
-                    if (m.includes('mobi')) return 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800'; // Yellow
-                    if (m.includes('onix')) return 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800'; // Silver
-                    if (m.includes('hb20')) return 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800'; // White
-                    if (m.includes('compass')) return 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800'; // Greenish
-                    if (m.includes('argo')) return 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=800'; // Blueish
-                    return `https://loremflickr.com/800/600/${b.replace(' ', '')},${m.replace(' ', '')},car/all?lock=${car.id.length}`;
+                    // Chevrolet Onix (Hatch Prata)
+                    if (m.includes('onix')) return 'https://images.unsplash.com/photo-1542362567-b054cc4b3ad3?auto=format&fit=crop&q=80&w=800';
+                    // Fiat Mobi (Hatch Amarelo/Compacto)
+                    if (m.includes('mobi')) return 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800';
+                    // Hyundai HB20 (Hatch Branco)
+                    if (m.includes('hb20')) return 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800';
+                    // Jeep Compass (SUV Verde/Escuro)
+                    if (m.includes('compass')) return 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800';
+                    // Fiat Argo (Hatch Azul)
+                    if (m.includes('argo')) return 'https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&q=80&w=800';
+
+                    // Fallback
+                    return `https://images.unsplash.com/photo-1494905971473-2077977a288c?auto=format&fit=crop&q=80&w=800&sig=${car.id.slice(0, 8)}`;
                   })()}
                   alt={`${car.brand} ${car.model}`}
                   className="car-image studio-shot"
