@@ -180,7 +180,7 @@ const FleetManager = () => {
             <div key={car.id} className={`glass-card car-card ${car.status}`}>
               <div className="car-image-container">
                 <img
-                  src={`https://source.unsplash.com/featured/800x600?${car.brand},${car.model},car,studio`}
+                  src={`https://source.unsplash.com/featured/800x600?${car.brand.split(' ')[0]},${car.model.split(' ')[0]},car&sig=${car.id}`}
                   alt={`${car.brand} ${car.model}`}
                   className="car-image unified-style"
                   onError={(e) => {
