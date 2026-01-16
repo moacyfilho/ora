@@ -177,26 +177,51 @@ const FleetManager = () => {
           </div>
         ) : (
           filteredCars.map((car) => (
-            <div key={car.id} className="glass-card car-card">
-              <div className="car-image-placeholder">
-                <Car size={64} color="rgba(255,255,255,0.1)" />
-              </div>
-              <div className="car-info">
-                <div className="car-header">
-                  <h3>{car.brand} {car.model}</h3>
+            <div key={car.id} className={`glass-card car-card ${car.status}`}>
+              <div className="car-image-container">
+                <img
+                  src={`https://source.unsplash.com/800x600/?car,${car.brand},${car.model}`}
+                  alt={`${car.brand} ${car.model}`}
+                  className="car-image"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=800';
+                  }}
+                />
+                <div className="image-overlay">
                   <StatusBadge status={car.status} />
                 </div>
-                <p className="plate">{car.license_plate} • {car.year}</p>
+              </div>
+
+              <div className="car-info">
+                <div className="car-header">
+                  <div>
+                    <h3>{car.brand} {car.model}</h3>
+                    <p className="plate">{car.license_plate} • {car.year}</p>
+                  </div>
+                </div>
+
+                <div className="telematics">
+                  <div className="telematic-item">
+                    <span className="label">Combustível</span>
+                    <div className="fuel-bar-bg">
+                      <div className="fuel-bar-fill" style={{ width: '75%', background: 'var(--primary)' }}></div>
+                    </div>
+                  </div>
+                  <div className="telematic-item">
+                    <span className="label">KM Rodados</span>
+                    <span className="value">12.450 km</span>
+                  </div>
+                </div>
 
                 {car.status === 'rented' && car.activeRental && (
                   <div className="rental-info-tag animate-fade-in">
                     <div className="info-row">
-                      <User size={14} />
+                      <User size={14} color="var(--primary)" />
                       <span>{car.activeRental.customer_name}</span>
                     </div>
                     <div className="info-row">
-                      <Clock size={14} />
-                      <span>{differenceInDays(new Date(car.activeRental.end_date), new Date())} dias restantes</span>
+                      <Clock size={14} color="var(--primary)" />
+                      <span>{differenceInDays(new Date(car.activeRental.end_date), new Date())} dias p/ devolução</span>
                     </div>
                   </div>
                 )}
@@ -204,13 +229,14 @@ const FleetManager = () => {
                 {car.status === 'available' && (
                   <div className="available-info-tag">
                     <CheckCircle size={14} />
-                    <span>Pronto para alugar</span>
+                    <span>Pronto para operação</span>
                   </div>
                 )}
+
                 <div className="car-footer">
                   <div className="price">
-                    <span className="label">Diária</span>
-                    <span className="value">R$ {car.daily_rate}</span>
+                    <span className="label">Valor Diária</span>
+                    <span className="value">R$ {car.daily_rate.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="actions">
                     <div className="delete-container">
@@ -221,7 +247,7 @@ const FleetManager = () => {
                         </div>
                       ) : (
                         <button className="icon-btn" onClick={() => setConfirmDeleteId(car.id)} title="Excluir">
-                          <Trash2 size={18} color="var(--error)" />
+                          <Trash2 size={18} color="rgba(255,255,255,0.4)" className="trash-icon" />
                         </button>
                       )}
                     </div>
@@ -283,62 +309,114 @@ const FleetManager = () => {
         .car-card {
           padding: 0;
           overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1px solid var(--surface-border);
+          position: relative;
         }
-        .car-image-placeholder {
+        .car-card:hover {
+          transform: translateY(-10px);
+          border-color: rgba(0, 229, 255, 0.4);
+          box-shadow: 0 15px 30px rgba(0, 229, 255, 0.1);
+        }
+        .car-card.available:hover { box-shadow: 0 15px 30px rgba(0, 230, 118, 0.1); }
+        .car-card.rented:hover { box-shadow: 0 15px 30px rgba(0, 229, 255, 0.1); }
+        .car-card.maintenance:hover { box-shadow: 0 15px 30px rgba(255, 160, 0, 0.1); }
+
+        .car-image-container {
           height: 180px;
-          background: linear-gradient(45deg, #1a1a2e, #16213e);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-bottom: 1px solid var(--surface-border);
+          position: relative;
+          overflow: hidden;
+        }
+        .car-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.8s ease;
+        }
+        .car-card:hover .car-image {
+          transform: scale(1.1);
+        }
+        .image-overlay {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          z-index: 10;
         }
         .car-info {
           padding: 1.5rem;
         }
-        .car-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 0.5rem;
-        }
-        .car-header h3 { font-size: 1.25rem; }
+        .car-header h3 { font-size: 1.3rem; margin-bottom: 0.2rem; }
         .plate {
-          color: var(--text-dim);
+          color: var(--primary);
           font-size: 0.8rem;
+          font-weight: 700;
           margin-bottom: 1rem;
           font-family: monospace;
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(0, 229, 255, 0.05);
           display: inline-block;
           padding: 0.2rem 0.6rem;
           border-radius: 4px;
-          border: 1px solid var(--surface-border);
         }
-        .rental-info-tag {
-          background: rgba(0, 229, 255, 0.05);
-          border: 1px dashed var(--primary);
-          padding: 0.8rem;
-          border-radius: 8px;
-          margin-bottom: 1rem;
+        
+        .telematics {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.8rem;
+          margin-bottom: 1.5rem;
+          background: rgba(255,255,255,0.02);
+          padding: 1rem;
+          border-radius: 10px;
+        }
+        .telematic-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .telematic-item .label { font-size: 0.75rem; color: var(--text-dim); }
+        .telematic-item .value { font-size: 0.85rem; font-weight: 600; }
+        
+        .fuel-bar-bg {
+          width: 60px;
+          height: 6px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 3px;
+          overflow: hidden;
+        }
+        .fuel-bar-fill {
+          height: 100%;
+          border-radius: 3px;
+          box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .rental-info-tag {
+          background: rgba(0, 229, 255, 0.03);
+          border: 1px solid rgba(0, 229, 255, 0.1);
+          padding: 1rem;
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
         }
         .info-row {
           display: flex;
           align-items: center;
           gap: 0.6rem;
           font-size: 0.85rem;
-          color: white;
         }
-        .info-row span { font-weight: 500; }
+        .info-row span { font-weight: 600; color: white; }
+        
         .available-info-tag {
           color: var(--success);
           font-size: 0.85rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          margin-bottom: 1rem;
+          margin-bottom: 1.5rem;
           font-weight: 600;
+          background: rgba(0, 230, 118, 0.05);
+          padding: 0.8rem;
+          border-radius: 10px;
         }
         .status-badge {
           font-size: 0.75rem;
@@ -364,14 +442,8 @@ const FleetManager = () => {
           color: var(--primary);
         }
         .actions { display: flex; gap: 1rem; }
-        .icon-btn {
-          background: none;
-          border: none;
-          color: var(--text-dim);
-          cursor: pointer;
-          transition: color 0.2s;
-        }
-        .icon-btn:hover { color: white; }
+        .actions .trash-icon:hover { color: var(--error); opacity: 1; }
+        .icon-btn:hover { color: white; transform: scale(1.1); }
         .empty-state {
           grid-column: 1 / -1;
           display: flex;
