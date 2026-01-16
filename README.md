@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# 🚗 ORA - Sistema de Gestão de Frota
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **ORA** é uma plataforma moderna e responsiva para aluguel e gestão de veículos, desenvolvida com tecnologia de ponta para otimizar o controle da sua frota.
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades Principais
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **Dashboard Intuitivo**: Visão geral de faturamento, carros alugados e manutenções.
+*   **Gestão de Frota (Fleet Manager)**: Cadastro detalhado de veículos com fotos reais (estilo Studio) e status em tempo real.
+*   **Controle de Aluguéis**: Fluxo de criação de contratos, cálculo automático de diárias e controle de prazos.
+*   **Financeiro Premium**:
+    *   Módulo de Cobrança com abas "Pendentes" e "Histórico".
+    *   Baixa de pagamentos facilitada (Pix, Cartão, Dinheiro).
+    *   Envio de cobranças via WhatsApp com um clique.
+    *   Modal de detalhes financeiros com cálculo de saldo devedor.
+*   **Gestão de Clientes**: Cadastro completo com upload de CNH e comprovante de residência.
 
-## React Compiler
+## 🚀 Tecnologias Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **Frontend**: React, TypeScript, Vite
+*   **Estilização**: CSS Modules, Lucide React (Ícones), Glassmorphism UI
+*   **Backend/Banco de Dados**: Supabase (PostgreSQL, Auth, Storage)
 
-## Expanding the ESLint configuration
+## 📦 Como Implantar no Vercel
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Este projeto já está configurado para ser implantado na **Vercel** em poucos cliques.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1️⃣ Importar Projeto
+acesse [vercel.com/new](https://vercel.com/new) e importe o repositório do GitHub `moacyfilho/ora`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 2️⃣ Configurar Variáveis de Ambiente
+Na tela de configuração ("Configure Project"), adicione as seguintes variáveis na seção **Environment Variables**:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Nome | Valor |
+|------|-------|
+| `VITE_SUPABASE_URL` | `https://cgyzpgzxemqapkkmgpwq.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | `sb_publishable_hSubVT6w_xhS7Osllg_Qqw_4mezKhAN` |
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> **Nota:** Assegure-se de copiar os valores exatos acima para garantir a conexão com o banco de dados.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 3️⃣ Deploy
+Clique em **Deploy** e aguarde alguns segundos. Seu sistema estará online!
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🔐 Acesso ao Sistema
+
+*   **Link do Repositório**: [github.com/moacyfilho/ora](https://github.com/moacyfilho/ora)
+*   **Login Admin Padrão**:
+    *   Usuário: `Ot@vio2026`
+    *   Senha: `Jordan31@`
+
+---
+Desenvolvido por **Antigravity** para ORA Cars.
