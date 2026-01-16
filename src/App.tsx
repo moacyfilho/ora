@@ -93,6 +93,12 @@ function App() {
         </div>
       </aside>
 
+      {/* Mobile Overlay */}
+      <div
+        className={`mobile-overlay ${isSidebarOpen ? 'open' : ''}`}
+        onClick={() => setIsSidebarOpen(false)}
+      />
+
       {/* Main Content */}
       <main className="main-content">
         <header className="top-header">
@@ -290,20 +296,23 @@ function App() {
           z-index: 100;
         }
 
-        .content-area {
-          padding: 2rem;
-          flex: 1;
-        }
-
-        .mobile-toggle, .menu-btn {
+        .mobile-overlay {
           display: none;
-          background: none;
-          border: none;
-          color: white;
-          cursor: pointer;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 999;
         }
 
         @media (max-width: 1024px) {
+          .mobile-overlay.open {
+            display: block;
+          }
+          
           .sidebar {
             display: flex;
             position: fixed;
@@ -328,6 +337,16 @@ function App() {
           .content-area {
             padding: 1rem;
             padding-bottom: 2rem;
+          }
+
+          .mobile-toggle {
+            display: block;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
           }
 
           .menu-btn {
