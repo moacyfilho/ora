@@ -174,15 +174,15 @@ const CustomerManager = () => {
                 <div className="doc-badges">
                   <label className={`doc-status ${customer.cnh_image_url ? 'ready' : 'missing'}`}>
                     <FileText size={14} />
-                    <span>CNH</span>
-                    <input type="file" accept="image/*" capture="environment" hidden onChange={e => handleFileUpload(customer.id, 'cnh', e)} />
-                    {customer.cnh_image_url && <a href={customer.cnh_image_url} target="_blank" rel="noreferrer"><ExternalLink size={12} className="link-icon" /></a>}
+                    <span>{customer.cnh_image_url ? 'CNH (Ver)' : 'CNH (Enviar)'}</span>
+                    <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'cnh', e)} />
+                    {customer.cnh_image_url && <a href={customer.cnh_image_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}><ExternalLink size={12} className="link-icon" /></a>}
                   </label>
                   <label className={`doc-status ${customer.residence_proof_url ? 'ready' : 'missing'}`}>
                     <ImageIcon size={14} />
-                    <span>Residência</span>
+                    <span>{customer.residence_proof_url ? 'Residência (Ver)' : 'Residência (Enviar)'}</span>
                     <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'residence', e)} />
-                    {customer.residence_proof_url && <a href={customer.residence_proof_url} target="_blank" rel="noreferrer"><ExternalLink size={12} className="link-icon" /></a>}
+                    {customer.residence_proof_url && <a href={customer.residence_proof_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}><ExternalLink size={12} className="link-icon" /></a>}
                   </label>
                 </div>
               </div>

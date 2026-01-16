@@ -310,8 +310,8 @@ function App() {
           }
 
           .content-area {
-            padding: 1.5rem;
-            padding-bottom: 90px; /* Space for bottom nav */
+            padding: 1rem;
+            padding-bottom: 100px; /* Increased space for bottom nav to prevent overlap */
           }
 
           .menu-btn {
@@ -335,11 +335,12 @@ function App() {
             background: rgba(10, 10, 25, 0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--surface-border);
-            padding: 0.8rem 1rem;
+            padding: 0.6rem 0.5rem;
             justify-content: space-around;
             align-items: center;
-            z-index: 1000;
-            padding-bottom: max(0.8rem, env(safe-area-inset-bottom));
+            z-index: 9999; /* Ensure it stays on top but check z-index of modals */
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
           }
 
           .bottom-nav-item {
@@ -348,11 +349,12 @@ function App() {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
             color: var(--text-dim);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 500;
             transition: 0.2s;
+            padding: 0.2rem;
           }
 
           .bottom-nav-item.active {
