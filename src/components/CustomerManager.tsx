@@ -172,18 +172,30 @@ const CustomerManager = () => {
               <div className="documents-section">
                 <p className="section-title">Documentos Anexados</p>
                 <div className="doc-badges">
-                  <label className={`doc-status ${customer.cnh_image_url ? 'ready' : 'missing'}`}>
-                    <FileText size={14} />
-                    <span>{customer.cnh_image_url ? 'CNH (Ver)' : 'CNH (Enviar)'}</span>
-                    <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'cnh', e)} />
-                    {customer.cnh_image_url && <a href={customer.cnh_image_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}><ExternalLink size={12} className="link-icon" /></a>}
-                  </label>
-                  <label className={`doc-status ${customer.residence_proof_url ? 'ready' : 'missing'}`}>
-                    <ImageIcon size={14} />
-                    <span>{customer.residence_proof_url ? 'Residência (Ver)' : 'Residência (Enviar)'}</span>
-                    <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'residence', e)} />
-                    {customer.residence_proof_url && <a href={customer.residence_proof_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}><ExternalLink size={12} className="link-icon" /></a>}
-                  </label>
+                  <div className={`doc-status ${customer.cnh_image_url ? 'ready' : 'missing'}`}>
+                    <label className="upload-trigger">
+                      <FileText size={14} />
+                      <span>{customer.cnh_image_url ? 'Alterar CNH' : 'Enviar CNH'}</span>
+                      <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'cnh', e)} />
+                    </label>
+                    {customer.cnh_image_url && (
+                      <a href={customer.cnh_image_url} target="_blank" rel="noopener noreferrer" className="view-btn">
+                        <ExternalLink size={14} />
+                      </a>
+                    )}
+                  </div>
+                  <div className={`doc-status ${customer.residence_proof_url ? 'ready' : 'missing'}`}>
+                    <label className="upload-trigger">
+                      <ImageIcon size={14} />
+                      <span>{customer.residence_proof_url ? 'Alterar Res.' : 'Enviar Res.'}</span>
+                      <input type="file" accept="image/*" hidden onChange={e => handleFileUpload(customer.id, 'residence', e)} />
+                    </label>
+                    {customer.residence_proof_url && (
+                      <a href={customer.residence_proof_url} target="_blank" rel="noopener noreferrer" className="view-btn">
+                        <ExternalLink size={14} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -316,22 +328,35 @@ const CustomerManager = () => {
           flex: 1;
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          padding: 0.6rem;
+          justify-content: space-between;
+          padding: 0.4rem 0.6rem;
           border-radius: 8px;
           font-size: 0.8rem;
           font-weight: 600;
-          cursor: pointer;
           transition: 0.2s;
         }
+        .upload-trigger {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          flex: 1;
+        }
+        .view-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 6px;
+          color: white;
+          margin-left: 0.5rem;
+        }
+        .view-btn:hover { background: rgba(255,255,255,0.2); }
         .doc-status.ready {
           background: rgba(0, 230, 118, 0.1);
           color: var(--success);
           border: 1px solid rgba(0, 230, 118, 0.2);
-        }
-        .doc-status.ready:hover {
-          background: rgba(0, 230, 118, 0.2);
         }
         .doc-status.missing {
           background: rgba(255, 61, 113, 0.05);
@@ -339,7 +364,6 @@ const CustomerManager = () => {
           border: 1px dashed rgba(255, 61, 113, 0.3);
           opacity: 0.7;
         }
-        .link-icon { margin-left: auto; opacity: 0.6; }
         .card-actions {
           display: flex;
           gap: 0.8rem;
