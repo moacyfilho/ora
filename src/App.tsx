@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Car,
   LayoutDashboard,
@@ -8,7 +8,8 @@ import {
   CreditCard,
   X,
   Plus,
-  Menu
+  Menu,
+  Download
 } from 'lucide-react';
 import Dashboard from './components/Dashboard.tsx';
 import FleetManager from './components/FleetManager.tsx';
@@ -27,6 +28,32 @@ function App() {
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewRentalModalOpen, setIsNewRentalModalOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setIsInstallable(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   if (!isAuthenticated) {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
@@ -82,6 +109,16 @@ function App() {
               <p className="name">Otávio</p>
               <p className="role">Pro Manager</p>
             </div>
+            {isInstallable && (
+              <button
+                className="logout-btn"
+                onClick={handleInstallClick}
+                title="Instalar App"
+                style={{ marginRight: '0.5rem', background: 'rgba(0, 229, 255, 0.1)', color: 'var(--primary)' }}
+              >
+                <Download size={18} />
+              </button>
+            )}
             <button
               className="logout-btn"
               onClick={() => setIsAuthenticated(false)}
@@ -110,6 +147,12 @@ function App() {
             <span className="gradient-text">ORA</span>
           </div>
           <div className="header-actions">
+            {isInstallable && (
+              <button className="btn-secondary" onClick={handleInstallClick} style={{ padding: '0.6rem', border: '1px solid var(--primary)' }}>
+                <Download size={18} />
+                <span style={{ fontSize: '0.8rem' }}>Instalar App</span>
+              </button>
+            )}
             <button className="btn-primary" onClick={() => setIsNewRentalModalOpen(true)}>
               <Plus size={18} />
               <span>Novo Aluguel</span>
