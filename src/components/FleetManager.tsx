@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Car, Plus, Settings2, Trash2, X, Search } from 'lucide-react';
+import { Car, Plus, Settings2, Trash2, X, Search, User, Clock, CheckCircle } from 'lucide-react';
 import { EditCarModal } from './EditCarModal';
+import { differenceInDays } from 'date-fns';
 
 const FleetManager = () => {
   const [cars, setCars] = useState<any[]>([]);
@@ -25,8 +26,20 @@ const FleetManager = () => {
   }, []);
 
   const fetchCars = async () => {
-    const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
-    if (data) setCars(data);
+    // Fetch cars with their latest active rental
+    const { data } = await supabase
+      .from('cars')
+      .select('*, rentals(*)')
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      // Filter rentals to keep only the active one in JS
+      const carsWithActiveRental = data.map(car => ({
+        ...car,
+        activeRental: (car.rentals || []).find((r: any) => r.status === 'active')
+      }));
+      setCars(carsWithActiveRental);
+    }
     setLoading(false);
   };
 
@@ -174,6 +187,26 @@ const FleetManager = () => {
                   <StatusBadge status={car.status} />
                 </div>
                 <p className="plate">{car.license_plate} • {car.year}</p>
+
+                {car.status === 'rented' && car.activeRental && (
+                  <div className="rental-info-tag animate-fade-in">
+                    <div className="info-row">
+                      <User size={14} />
+                      <span>{car.activeRental.customer_name}</span>
+                    </div>
+                    <div className="info-row">
+                      <Clock size={14} />
+                      <span>{differenceInDays(new Date(car.activeRental.end_date), new Date())} dias restantes</span>
+                    </div>
+                  </div>
+                )}
+
+                {car.status === 'available' && (
+                  <div className="available-info-tag">
+                    <CheckCircle size={14} />
+                    <span>Pronto para alugar</span>
+                  </div>
+                )}
                 <div className="car-footer">
                   <div className="price">
                     <span className="label">Diária</span>
@@ -271,13 +304,41 @@ const FleetManager = () => {
         .car-header h3 { font-size: 1.25rem; }
         .plate {
           color: var(--text-dim);
-          font-size: 0.9rem;
-          margin-bottom: 1.5rem;
+          font-size: 0.8rem;
+          margin-bottom: 1rem;
           font-family: monospace;
           background: rgba(255, 255, 255, 0.05);
           display: inline-block;
-          padding: 0.2rem 0.5rem;
+          padding: 0.2rem 0.6rem;
           border-radius: 4px;
+          border: 1px solid var(--surface-border);
+        }
+        .rental-info-tag {
+          background: rgba(0, 229, 255, 0.05);
+          border: 1px dashed var(--primary);
+          padding: 0.8rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .info-row {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 0.85rem;
+          color: white;
+        }
+        .info-row span { font-weight: 500; }
+        .available-info-tag {
+          color: var(--success);
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
         }
         .status-badge {
           font-size: 0.75rem;

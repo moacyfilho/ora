@@ -63,7 +63,6 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
         e.preventDefault();
 
         const selectedCustomer = customers.find(c => c.id === formData.customer_id);
-        const selectedCar = cars.find(c => c.id === formData.car_id);
 
         const rentalData = {
             customer_id: formData.customer_id,
