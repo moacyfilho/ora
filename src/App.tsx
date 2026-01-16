@@ -18,6 +18,7 @@ import CustomerManager from './components/CustomerManager.tsx';
 import MaintenanceManager from './components/MaintenanceManager.tsx';
 import BillingManager from './components/BillingManager.tsx';
 import { NewRentalModal } from './components/NewRentalModal.tsx';
+import { InstallHelpModal } from './components/InstallHelpModal.tsx';
 import Login from './components/Login.tsx';
 import { LogOut } from 'lucide-react';
 
@@ -29,6 +30,8 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewRentalModalOpen, setIsNewRentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [installHelpOpen, setInstallHelpOpen] = useState(false);
+  const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('desktop');
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -45,19 +48,26 @@ function App() {
 
   const handleInstallClick = async () => {
     console.log("Install button clicked");
-    try {
-      if (!deferredPrompt) {
-        alert("⚠️ Instalação Manual Necessária:\n\n📱 iPhone/iPad: Toque em 'Compartilhar' le 'Adicionar à Tela de Início'.\n\n🤖 Android: Se não abriu nada, toque nos 3 pontinhos do navegador e procure 'Instalar aplicativo'.");
-        return;
-      }
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log("Install outcome:", outcome);
-      setDeferredPrompt(null);
-    } catch (err) {
-      console.error("Install error:", err);
-      alert("Erro ao tentar instalar. Tente pelos menus do navegador.");
+
+    // Always detect platform first
+    const currentPlatform = detectPlatform();
+    setPlatform(currentPlatform);
+
+    if (!deferredPrompt) {
+      setInstallHelpOpen(true);
+      return;
     }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log("Install outcome:", outcome);
+    setDeferredPrompt(null);
+  };
+
+  const detectPlatform = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/.test(userAgent)) return 'ios';
+    if (/android/.test(userAgent)) return 'android';
+    return 'desktop';
   };
 
   if (!isAuthenticated) {
@@ -112,7 +122,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.0 PWA FIX</p>
+              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.1 MOBILE HELP</p>
             </div>
             <button
               className="logout-btn"
@@ -201,6 +211,12 @@ function App() {
           setIsNewRentalModalOpen(false);
           setActiveView('rentals');
         }}
+      />
+
+      <InstallHelpModal
+        isOpen={installHelpOpen}
+        onClose={() => setInstallHelpOpen(false)}
+        platform={platform}
       />
 
       <style>{`
