@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Car, Plus, Settings2, Trash2, X } from 'lucide-react';
+import { Car, Plus, Settings2, Trash2, X, Search } from 'lucide-react';
+import { EditCarModal } from './EditCarModal';
 
 const FleetManager = () => {
   const [cars, setCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCar, setEditingCar] = useState<any | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -82,10 +84,11 @@ const FleetManager = () => {
           <p>Gerencie seus veículos.</p>
         </div>
         <div className="header-controls">
-          <div className="search-bar">
+          <div className="search-field">
+            <Search size={18} className="search-icon" />
             <input
               type="text"
-              placeholder="Buscar por marca, modelo ou placa..."
+              placeholder="Marca, modelo ou placa..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -95,14 +98,14 @@ const FleetManager = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">Todos os Status</option>
+            <option value="all">Filtro: Todos</option>
             <option value="available">Disponíveis</option>
             <option value="rented">Alugados</option>
             <option value="maintenance">Manutenção</option>
           </select>
           <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
             <Plus size={18} />
-            <span>Adicionar Carro</span>
+            <span>Novo Carro</span>
           </button>
         </div>
       </div>
@@ -151,6 +154,14 @@ const FleetManager = () => {
             <Car size={48} color="var(--text-dim)" />
             <p>Nenhum carro cadastrado ainda.</p>
           </div>
+        ) : filteredCars.length === 0 ? (
+          <div className="glass-card empty-state">
+            <Search size={48} color="var(--text-dim)" />
+            <p>Nenhum veículo encontrado com esses filtros.</p>
+            <button className="btn-secondary" onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}>
+              Limpar Filtros
+            </button>
+          </div>
         ) : (
           filteredCars.map((car) => (
             <div key={car.id} className="glass-card car-card">
@@ -172,8 +183,8 @@ const FleetManager = () => {
                     <div className="delete-container">
                       {confirmDeleteId === car.id ? (
                         <div className="confirm-actions animate-fade-in">
-                          <button className="confirm-yes" onClick={() => handleDeleteCar(car.id)}>Sim</button>
-                          <button className="confirm-no" onClick={() => setConfirmDeleteId(null)}>Não</button>
+                          <button className="confirm-yes" onClick={() => handleDeleteCar(car.id)}>S</button>
+                          <button className="confirm-no" onClick={() => setConfirmDeleteId(null)}>N</button>
                         </div>
                       ) : (
                         <button className="icon-btn" onClick={() => setConfirmDeleteId(car.id)} title="Excluir">
@@ -181,7 +192,13 @@ const FleetManager = () => {
                         </button>
                       )}
                     </div>
-                    <button className="icon-btn"><Settings2 size={18} /></button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => setEditingCar(car)}
+                      title="Editar Detalhes"
+                    >
+                      <Settings2 size={18} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -189,6 +206,13 @@ const FleetManager = () => {
           ))
         )}
       </div>
+
+      <EditCarModal
+        isOpen={!!editingCar}
+        onClose={() => setEditingCar(null)}
+        onSuccess={fetchCars}
+        car={editingCar}
+      />
 
       <style>{`
         .modal-overlay {
@@ -299,31 +323,64 @@ const FleetManager = () => {
 
         .header-controls {
           display: flex;
-          gap: 1rem;
+          gap: 0.8rem;
           align-items: center;
         }
 
-        .search-bar input {
+        .search-field {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .search-field .search-icon {
+          position: absolute;
+          left: 0.8rem;
+          color: var(--text-dim);
+          pointer-events: none;
+        }
+
+        .search-field input {
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid var(--surface-border);
-          padding: 0.6rem 1rem;
+          padding: 0.6rem 0.8rem 0.6rem 2.5rem;
           border-radius: 8px;
           color: white;
-          width: 250px;
+          width: 220px;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+        }
+
+        .search-field input:focus {
+          border-color: var(--primary);
+          background: rgba(255, 255, 255, 0.08);
+          box-shadow: 0 0 10px var(--primary-glow);
         }
 
         .filter-select {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid var(--surface-border);
+          background: rgba(0, 229, 255, 0.05);
+          border: 1px solid rgba(0, 229, 255, 0.2);
           padding: 0.6rem;
           border-radius: 8px;
-          color: white;
+          color: var(--primary);
           cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
         }
 
         .filter-select option {
           background: #111;
           color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--surface-border);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
         }
 
         .delete-container {
@@ -333,27 +390,20 @@ const FleetManager = () => {
 
         .confirm-actions {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.3rem;
         }
 
         .confirm-yes, .confirm-no {
           border: none;
           border-radius: 4px;
-          padding: 0.2rem 0.6rem;
-          font-size: 0.75rem;
-          font-weight: 600;
+          padding: 0.2rem 0.5rem;
+          font-size: 0.7rem;
+          font-weight: 700;
           cursor: pointer;
         }
 
-        .confirm-yes {
-          background: var(--error);
-          color: white;
-        }
-
-        .confirm-no {
-          background: var(--surface-border);
-          color: white;
-        }
+        .confirm-yes { background: var(--error); color: white; }
+        .confirm-no { background: var(--surface-border); color: white; }
       `}</style>
     </div>
   );
