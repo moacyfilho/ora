@@ -105,7 +105,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v2.3 CONNECTED</p>
+              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v2.4 READY</p>
             </div>
             <button
               className="logout-btn"
