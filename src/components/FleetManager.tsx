@@ -180,9 +180,18 @@ const FleetManager = () => {
             <div key={car.id} className={`glass-card car-card ${car.status}`}>
               <div className="car-image-container">
                 <img
-                  src={`https://loremflickr.com/800/600/${car.brand.toLowerCase().replace(' ', '')},${car.model.toLowerCase().replace(' ', '')},car/all?lock=${car.id.split('-').reduce((acc: number, part: string) => acc + parseInt(part, 16) || 0, 0)}`}
+                  src={(() => {
+                    const m = car.model.toLowerCase();
+                    const b = car.brand.toLowerCase();
+                    if (m.includes('mobi')) return 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800'; // Yellow
+                    if (m.includes('onix')) return 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800'; // Silver
+                    if (m.includes('hb20')) return 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800'; // White
+                    if (m.includes('compass')) return 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800'; // Greenish
+                    if (m.includes('argo')) return 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=800'; // Blueish
+                    return `https://loremflickr.com/800/600/${b.replace(' ', '')},${m.replace(' ', '')},car/all?lock=${car.id.length}`;
+                  })()}
                   alt={`${car.brand} ${car.model}`}
-                  className="car-image unified-style"
+                  className="car-image studio-shot"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800';
                   }}
@@ -323,40 +332,30 @@ const FleetManager = () => {
         .car-card.maintenance:hover { box-shadow: 0 15px 30px rgba(255, 160, 0, 0.1); }
 
         .car-image-container {
-          height: 180px;
+          height: 200px;
           position: relative;
           overflow: hidden;
-        }
-        .car-image-container::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: linear-gradient(180deg, rgba(10, 10, 20, 0) 0%, rgba(10, 10, 20, 0.4) 100%);
-          pointer-events: none;
+          background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .car-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.8s ease;
-        }
-        .car-image.unified-style {
-          filter: brightness(0.7) contrast(1.2) saturate(1.1);
-          mix-blend-mode: luminosity;
-          opacity: 0.9;
-        }
-        .car-card:hover .car-image.unified-style {
-          filter: brightness(0.9) contrast(1.1) saturate(1.3);
-          mix-blend-mode: normal;
-          opacity: 1;
+          width: 90%;
+          height: auto;
+          max-height: 85%;
+          object-fit: contain;
+          transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+          filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
         }
         .car-card:hover .car-image {
-          transform: scale(1.1);
+          transform: scale(1.1) translateY(-10px);
+          filter: drop-shadow(0 25px 30px rgba(0,0,0,0.3));
         }
         .image-overlay {
           position: absolute;
-          top: 1rem;
-          right: 1rem;
+          top: 0.8rem;
+          right: 0.8rem;
           z-index: 10;
         }
         .car-info {
