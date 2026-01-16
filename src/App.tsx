@@ -105,7 +105,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role">Pro Manager v1.1</p>
+              <p className="role">Pro Manager v1.2</p>
             </div>
             <button
               className="logout-btn"
@@ -331,6 +331,13 @@ function App() {
           position: sticky;
           top: 0;
           z-index: 100;
+        }
+
+        .header-actions {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          margin-left: auto;
         }
 
         .mobile-overlay {
