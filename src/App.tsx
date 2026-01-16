@@ -122,7 +122,7 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.1 MOBILE HELP</p>
+              <p className="role" style={{ color: '#00E676', fontWeight: 'bold' }}>v3.2 MANIFEST FIX</p>
             </div>
             <button
               className="logout-btn"
