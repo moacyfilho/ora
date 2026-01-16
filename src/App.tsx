@@ -105,8 +105,16 @@ function App() {
             <div className="avatar">OT</div>
             <div className="info">
               <p className="name">Otávio</p>
-              <p className="role">Pro Manager v1.2</p>
+              <p className="role" style={{ color: 'var(--primary)' }}>v1.3 RELOAD</p>
             </div>
+            <button
+              className="logout-btn"
+              onClick={() => window.location.reload()}
+              title="Atualizar Sistema"
+              style={{ marginRight: '0.2rem', background: 'rgba(255, 160, 0, 0.1)', color: 'var(--warning)' }}
+            >
+              <Wrench size={18} />
+            </button>
             <button
               className="logout-btn"
               onClick={handleInstallClick}
