@@ -6,6 +6,9 @@ const FleetManager = () => {
   const [cars, setCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [newCar, setNewCar] = useState({
     brand: '',
     model: '',
@@ -36,11 +39,25 @@ const FleetManager = () => {
   };
 
   const handleDeleteCar = async (id: string) => {
-    if (window.confirm('Tem certeza que deseja excluir este veículo?')) {
-      const { error } = await supabase.from('cars').delete().eq('id', id);
-      if (!error) fetchCars();
+    const { error } = await supabase.from('cars').delete().eq('id', id);
+    if (!error) {
+      fetchCars();
+      setConfirmDeleteId(null);
+    } else {
+      alert('Erro ao excluir: ' + error.message);
     }
   };
+
+  const filteredCars = cars.filter(car => {
+    const matchesSearch =
+      car.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      car.license_plate.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter === 'all' || car.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const StatusBadge = ({ status }: { status: string }) => {
     const styles: any = {
@@ -64,10 +81,30 @@ const FleetManager = () => {
           <h2>Minha Frota</h2>
           <p>Gerencie seus veículos.</p>
         </div>
-        <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          <span>Adicionar Carro</span>
-        </button>
+        <div className="header-controls">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Buscar por marca, modelo ou placa..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <select
+            className="filter-select"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">Todos os Status</option>
+            <option value="available">Disponíveis</option>
+            <option value="rented">Alugados</option>
+            <option value="maintenance">Manutenção</option>
+          </select>
+          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            <span>Adicionar Carro</span>
+          </button>
+        </div>
       </div>
 
       {isModalOpen && (
@@ -115,7 +152,7 @@ const FleetManager = () => {
             <p>Nenhum carro cadastrado ainda.</p>
           </div>
         ) : (
-          cars.map((car) => (
+          filteredCars.map((car) => (
             <div key={car.id} className="glass-card car-card">
               <div className="car-image-placeholder">
                 <Car size={64} color="rgba(255,255,255,0.1)" />
@@ -132,9 +169,18 @@ const FleetManager = () => {
                     <span className="value">R$ {car.daily_rate}</span>
                   </div>
                   <div className="actions">
-                    <button className="icon-btn" onClick={() => handleDeleteCar(car.id)} title="Excluir">
-                      <Trash2 size={18} color="var(--error)" />
-                    </button>
+                    <div className="delete-container">
+                      {confirmDeleteId === car.id ? (
+                        <div className="confirm-actions animate-fade-in">
+                          <button className="confirm-yes" onClick={() => handleDeleteCar(car.id)}>Sim</button>
+                          <button className="confirm-no" onClick={() => setConfirmDeleteId(null)}>Não</button>
+                        </div>
+                      ) : (
+                        <button className="icon-btn" onClick={() => setConfirmDeleteId(car.id)} title="Excluir">
+                          <Trash2 size={18} color="var(--error)" />
+                        </button>
+                      )}
+                    </div>
                     <button className="icon-btn"><Settings2 size={18} /></button>
                   </div>
                 </div>
@@ -249,6 +295,64 @@ const FleetManager = () => {
           padding: 4rem;
           gap: 1rem;
           text-align: center;
+        }
+
+        .header-controls {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+        }
+
+        .search-bar input {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--surface-border);
+          padding: 0.6rem 1rem;
+          border-radius: 8px;
+          color: white;
+          width: 250px;
+        }
+
+        .filter-select {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--surface-border);
+          padding: 0.6rem;
+          border-radius: 8px;
+          color: white;
+          cursor: pointer;
+        }
+
+        .filter-select option {
+          background: #111;
+          color: white;
+        }
+
+        .delete-container {
+          display: flex;
+          align-items: center;
+        }
+
+        .confirm-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .confirm-yes, .confirm-no {
+          border: none;
+          border-radius: 4px;
+          padding: 0.2rem 0.6rem;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .confirm-yes {
+          background: var(--error);
+          color: white;
+        }
+
+        .confirm-no {
+          background: var(--surface-border);
+          color: white;
         }
       `}</style>
     </div>
