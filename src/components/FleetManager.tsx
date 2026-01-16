@@ -180,11 +180,11 @@ const FleetManager = () => {
             <div key={car.id} className={`glass-card car-card ${car.status}`}>
               <div className="car-image-container">
                 <img
-                  src={`https://source.unsplash.com/800x600/?car,${car.brand},${car.model}`}
+                  src={`https://source.unsplash.com/featured/800x600?${car.brand},${car.model},car,studio`}
                   alt={`${car.brand} ${car.model}`}
-                  className="car-image"
+                  className="car-image unified-style"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=800';
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800';
                   }}
                 />
                 <div className="image-overlay">
@@ -327,11 +327,28 @@ const FleetManager = () => {
           position: relative;
           overflow: hidden;
         }
+        .car-image-container::after {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: linear-gradient(180deg, rgba(10, 10, 20, 0) 0%, rgba(10, 10, 20, 0.4) 100%);
+          pointer-events: none;
+        }
         .car-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
           transition: transform 0.8s ease;
+        }
+        .car-image.unified-style {
+          filter: brightness(0.7) contrast(1.2) saturate(1.1);
+          mix-blend-mode: luminosity;
+          opacity: 0.9;
+        }
+        .car-card:hover .car-image.unified-style {
+          filter: brightness(0.9) contrast(1.1) saturate(1.3);
+          mix-blend-mode: normal;
+          opacity: 1;
         }
         .car-card:hover .car-image {
           transform: scale(1.1);
