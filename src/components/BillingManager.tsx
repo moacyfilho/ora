@@ -207,15 +207,15 @@ const BillingManager = () => {
                                             const debt = rental.total_amount - rental.paid_amount;
                                             return (
                                                 <tr key={rental.id} className="animate-fade-in">
-                                                    <td>
+                                                    <td data-label="Contrato / Data">
                                                         <p className="bold">#{rental.id.slice(0, 8)}</p>
                                                         <p className="dim">{new Date(rental.start_date).toLocaleDateString()}</p>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Cliente">
                                                         <p className="bold">{rental.customer_name}</p>
                                                         <p className="dim">{rental.cars?.brand} {rental.cars?.model}</p>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Progresso">
                                                         <div className="progress-container">
                                                             <div className="progress-bar-bg">
                                                                 <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
@@ -223,8 +223,8 @@ const BillingManager = () => {
                                                             <span>R$ {rental.paid_amount.toLocaleString('pt-BR')} / R$ {rental.total_amount.toLocaleString('pt-BR')}</span>
                                                         </div>
                                                     </td>
-                                                    <td><span className="debt-value">R$ {debt.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
-                                                    <td>
+                                                    <td data-label="Saldo Devedor"><span className="debt-value">R$ {debt.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></td>
+                                                    <td data-label="Ações">
                                                         <div className="action-btns">
                                                             <button
                                                                 className="btn-action pay"
@@ -274,19 +274,19 @@ const BillingManager = () => {
                                     ) : (
                                         completedPayments.map(payment => (
                                             <tr key={payment.id}>
-                                                <td>{new Date(payment.payment_date).toLocaleDateString()}</td>
-                                                <td>
+                                                <td data-label="Data">{new Date(payment.payment_date).toLocaleDateString()}</td>
+                                                <td data-label="Cliente">
                                                     <p className="bold">{payment.rentals?.customer_name}</p>
                                                     <p className="dim">{payment.rentals?.cars?.model}</p>
                                                 </td>
-                                                <td>{payment.payment_method}</td>
-                                                <td>
+                                                <td data-label="Método">{payment.payment_method}</td>
+                                                <td data-label="Valor">
                                                     <span className="received-value">
                                                         <ArrowUpRight size={14} />
                                                         R$ {payment.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                                     </span>
                                                 </td>
-                                                <td><span className="status-pill success">Confirmado</span></td>
+                                                <td data-label="Status"><span className="status-pill success">Confirmado</span></td>
                                             </tr>
                                         ))
                                     )}

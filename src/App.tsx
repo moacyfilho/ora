@@ -6,7 +6,6 @@ import {
   Wrench,
   Users,
   CreditCard,
-  Menu,
   X,
   Plus
 } from 'lucide-react';
@@ -34,11 +33,21 @@ function App() {
 
   const NavItem = ({ name, icon: Icon, id }: { name: string, icon: any, id: View }) => (
     <button
-      onClick={() => setActiveView(id)}
+      onClick={() => { setActiveView(id); setIsSidebarOpen(false); }}
       className={`sidebar-item ${activeView === id ? 'active' : ''}`}
     >
       <Icon size={20} />
       <span>{name}</span>
+    </button>
+  );
+
+  const BottomNavItem = ({ icon: Icon, id, label }: { icon: any, id: View, label: string }) => (
+    <button
+      className={`bottom-nav-item ${activeView === id ? 'active' : ''}`}
+      onClick={() => setActiveView(id)}
+    >
+      <Icon size={24} />
+      <span className="nav-label">{label}</span>
     </button>
   );
 
@@ -86,9 +95,10 @@ function App() {
       {/* Main Content */}
       <main className="main-content">
         <header className="top-header">
-          <button className="menu-btn" onClick={() => setIsSidebarOpen(true)}>
-            <Menu size={24} />
-          </button>
+          <div className="mobile-logo">
+            <Car size={24} color="var(--primary)" />
+            <span className="gradient-text">ORA</span>
+          </div>
           <div className="header-actions">
             <button className="btn-primary" onClick={() => setIsNewRentalModalOpen(true)}>
               <Plus size={18} />
@@ -106,6 +116,21 @@ function App() {
           {activeView === 'billing' && <BillingManager />}
         </section>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="bottom-nav">
+        <BottomNavItem id="dashboard" icon={LayoutDashboard} label="Inicio" />
+        <BottomNavItem id="fleet" icon={Car} label="Frota" />
+        <BottomNavItem id="rentals" icon={CalendarRange} label="Aluguéis" />
+        <BottomNavItem id="billing" icon={CreditCard} label="Finanças" />
+        <button
+          className="bottom-nav-item"
+          onClick={() => setIsAuthenticated(false)}
+        >
+          <LogOut size={24} />
+          <span className="nav-label">Sair</span>
+        </button>
+      </nav>
 
       <NewRentalModal
         isOpen={isNewRentalModalOpen}
@@ -276,17 +301,72 @@ function App() {
 
         @media (max-width: 1024px) {
           .sidebar {
+            display: none; /* Hide sidebar completely on mobile in favor of bottom nav */
+          }
+          
+          .top-header {
+            padding: 0 1.5rem;
+            height: 70px;
+          }
+
+          .content-area {
+            padding: 1.5rem;
+            padding-bottom: 90px; /* Space for bottom nav */
+          }
+
+          .menu-btn {
+            display: none;
+          }
+
+          .mobile-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 800;
+            font-size: 1.2rem;
+          }
+
+          .bottom-nav {
+            display: flex;
             position: fixed;
-            left: 0;
-            top: 0;
             bottom: 0;
-            transform: translateX(-100%);
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--surface-border);
+            padding: 0.8rem 1rem;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            padding-bottom: max(0.8rem, env(safe-area-inset-bottom));
           }
-          .sidebar.open {
-            transform: translateX(0);
+
+          .bottom-nav-item {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: 0.2s;
           }
-          .mobile-toggle, .menu-btn {
-            display: block;
+
+          .bottom-nav-item.active {
+            color: var(--primary);
+          }
+
+          .bottom-nav-item.active svg {
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+          }
+        }
+
+        @media (min-width: 1025px) {
+          .bottom-nav, .mobile-logo {
+            display: none;
           }
         }
       `}</style>
