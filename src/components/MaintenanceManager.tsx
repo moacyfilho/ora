@@ -57,8 +57,8 @@ const MaintenanceManager = () => {
                 <div className="glass-card mini-stat">
                     <AlertTriangle size={20} color="var(--warning)" />
                     <div>
-                        <p className="label">Próximas Revisões</p>
-                        <h3>2 Veículos</h3>
+                        <p className="label">Pendências</p>
+                        <h3>{summary.pendingRevisions} Registros</h3>
                     </div>
                 </div>
                 <div className="glass-card mini-stat">
