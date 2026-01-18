@@ -25,7 +25,24 @@ const Rentals = () => {
   };
 
   const handleDeleteRental = async (id: string) => {
+    // 1. Get the rental being deleted to find the car_id
+    const { data: rental } = await supabase
+      .from('rentals')
+      .select('car_id')
+      .eq('id', id)
+      .single();
+
+    if (rental) {
+      // 2. Set car status back to available
+      await supabase
+        .from('cars')
+        .update({ status: 'available' })
+        .eq('id', rental.car_id);
+    }
+
+    // 3. Delete the rental
     const { error } = await supabase.from('rentals').delete().eq('id', id);
+
     if (!error) {
       fetchRentals();
       setConfirmDeleteId(null);

@@ -17,7 +17,8 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
         year: 2024,
         daily_rate: 0,
         status: 'available',
-        image_url: ''
+        image_url: '',
+        mileage: 0
     });
 
     useEffect(() => {
@@ -29,7 +30,8 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
                 year: car.year,
                 daily_rate: car.daily_rate,
                 status: car.status,
-                image_url: car.image_url || ''
+                image_url: car.image_url || '',
+                mileage: car.mileage || 0
             });
         }
     }, [car, isOpen]);

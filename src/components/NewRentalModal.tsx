@@ -18,7 +18,8 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
         end_date: '',
         daily_rate: '',
         total_amount: '',
-        status: 'active'
+        status: 'active',
+        start_mileage: ''
     });
 
     useEffect(() => {
@@ -71,16 +72,19 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
             customer_phone: selectedCustomer?.phone || '',
             start_date: formData.start_date,
             end_date: formData.end_date,
-            total_amount: parseFloat(formData.total_amount),
             paid_amount: 0,
-            status: formData.status
+            status: formData.status,
+            start_mileage: formData.start_mileage ? parseFloat(formData.start_mileage) : null
         };
 
         const { error } = await supabase.from('rentals').insert([rentalData]);
 
         if (!error) {
-            // Atualizar status do carro para 'rented'
-            await supabase.from('cars').update({ status: 'rented' }).eq('id', formData.car_id);
+            // Atualizar status do carro para 'rented' e kilometragem
+            const updates: any = { status: 'rented' };
+            if (formData.start_mileage) updates.mileage = parseFloat(formData.start_mileage);
+
+            await supabase.from('cars').update(updates).eq('id', formData.car_id);
             onSuccess();
             onClose();
             setFormData({
@@ -90,7 +94,8 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                 end_date: '',
                 daily_rate: '',
                 total_amount: '',
-                status: 'active'
+                status: 'active',
+                start_mileage: ''
             });
         } else {
             alert('Erro ao criar aluguel: ' + error.message);
@@ -145,6 +150,17 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                                     </option>
                                 ))}
                             </select>
+                        </div>
+
+                        <div className="input-group full-width">
+                            <label>Quilometragem Inicial (Km)</label>
+                            <input
+                                type="number"
+                                required
+                                value={formData.start_mileage}
+                                onChange={e => setFormData({ ...formData, start_mileage: e.target.value })}
+                                placeholder="Ex: 54000"
+                            />
                         </div>
 
                         <div className="input-group">

@@ -19,7 +19,8 @@ const FleetManager = () => {
     year: new Date().getFullYear(),
     daily_rate: 0,
     status: 'available',
-    image_url: ''
+    image_url: '',
+    mileage: 0
   });
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const FleetManager = () => {
     if (!error) {
       setIsModalOpen(false);
       fetchCars();
-      setNewCar({ brand: '', model: '', license_plate: '', year: new Date().getFullYear(), daily_rate: 0, status: 'available', image_url: '' });
+      setNewCar({ brand: '', model: '', license_plate: '', year: new Date().getFullYear(), daily_rate: 0, status: 'available', image_url: '', mileage: 0 });
     }
   };
 
@@ -190,6 +191,10 @@ const FleetManager = () => {
                   <label>Valor Diária (R$)</label>
                   <input type="number" step="0.01" value={newCar.daily_rate} onChange={e => setNewCar({ ...newCar, daily_rate: parseFloat(e.target.value) })} />
                 </div>
+                <div className="input-group">
+                  <label>Quilometragem (Km)</label>
+                  <input type="number" value={newCar.mileage} onChange={e => setNewCar({ ...newCar, mileage: parseFloat(e.target.value) })} />
+                </div>
               </div>
               <button type="submit" className="btn-primary full-width">Salvar Veículo</button>
             </form>
@@ -263,7 +268,7 @@ const FleetManager = () => {
                   </div>
                   <div className="telematic-item">
                     <span className="label">KM Rodados</span>
-                    <span className="value">12.450 km</span>
+                    <span className="value">{car.mileage ? car.mileage.toLocaleString('pt-BR') : 0} km</span>
                   </div>
                 </div>
 
