@@ -72,6 +72,7 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
             customer_phone: selectedCustomer?.phone || '',
             start_date: formData.start_date,
             end_date: formData.end_date,
+            total_amount: parseFloat(formData.total_amount),
             paid_amount: 0,
             status: formData.status,
             start_mileage: formData.start_mileage ? parseFloat(formData.start_mileage) : null

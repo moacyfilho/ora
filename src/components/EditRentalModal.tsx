@@ -14,7 +14,8 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
         start_date: '',
         end_date: '',
         total_amount: '',
-        status: 'active'
+        status: 'active',
+        daily_rate: 0
     });
 
     useEffect(() => {
@@ -23,10 +24,36 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                 start_date: rental.start_date.split('T')[0],
                 end_date: rental.end_date.split('T')[0],
                 total_amount: rental.total_amount.toString(),
-                status: rental.status
+                status: rental.status,
+                daily_rate: rental.cars?.daily_rate || rental.daily_rate || 0
             });
+            // Fetch car daily rate if not in rental or rental.cars
+            if (!rental.cars?.daily_rate && !rental.daily_rate && rental.car_id) {
+                fetchCarDailyRate(rental.car_id);
+            }
         }
     }, [rental, isOpen]);
+
+    const fetchCarDailyRate = async (carId: string) => {
+        const { data } = await supabase.from('cars').select('daily_rate').eq('id', carId).single();
+        if (data) {
+            setFormData(prev => ({ ...prev, daily_rate: data.daily_rate }));
+        }
+    };
+
+    useEffect(() => {
+        if (formData.start_date && formData.end_date && formData.daily_rate) {
+            const start = new Date(formData.start_date);
+            const end = new Date(formData.end_date);
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            // Ensure at least 1 day
+            const days = diffDays === 0 ? 1 : diffDays;
+
+            const newTotal = (days * formData.daily_rate).toFixed(2);
+            setFormData(prev => ({ ...prev, total_amount: newTotal }));
+        }
+    }, [formData.start_date, formData.end_date, formData.daily_rate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
