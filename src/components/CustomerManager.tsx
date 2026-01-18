@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Users, Plus, Search, Mail, Phone, FileText, Image as ImageIcon, ExternalLink, X } from 'lucide-react';
+import { Users, Plus, Search, Mail, Phone, FileText, Image as ImageIcon, ExternalLink, X, Pencil } from 'lucide-react';
+import { EditCustomerModal } from './EditCustomerModal';
+import { CustomerRentalsModal } from './CustomerRentalsModal';
 
 const CustomerManager = () => {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -15,6 +17,8 @@ const CustomerManager = () => {
     address: ''
   });
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<any>(null);
+  const [viewingRentalsCustomer, setViewingRentalsCustomer] = useState<any>(null);
 
   useEffect(() => {
     fetchCustomers();
@@ -119,7 +123,7 @@ const CustomerManager = () => {
                   <input required value={newCustomer.document_cpf} onChange={e => setNewCustomer({ ...newCustomer, document_cpf: e.target.value })} />
                 </div>
                 <div className="input-group">
-                  <label>Telefone</label>
+                  <label>Telefone (WhatsApp)</label>
                   <input required value={newCustomer.phone} onChange={e => setNewCustomer({ ...newCustomer, phone: e.target.value })} />
                 </div>
                 <div className="input-group">
@@ -136,6 +140,19 @@ const CustomerManager = () => {
           </div>
         </div>
       )}
+
+      <EditCustomerModal
+        isOpen={!!editingCustomer}
+        onClose={() => setEditingCustomer(null)}
+        customer={editingCustomer}
+        onSuccess={fetchCustomers}
+      />
+
+      <CustomerRentalsModal
+        isOpen={!!viewingRentalsCustomer}
+        onClose={() => setViewingRentalsCustomer(null)}
+        customer={viewingRentalsCustomer}
+      />
 
       <div className="customers-grid">
         {loading ? (
@@ -161,6 +178,7 @@ const CustomerManager = () => {
                   <Phone size={14} />
                   <span>{customer.phone}</span>
                 </div>
+
                 {customer.email && (
                   <div className="info-item">
                     <Mail size={14} />
@@ -210,8 +228,27 @@ const CustomerManager = () => {
                   </div>
                 ) : (
                   <>
-                    <button className="btn-secondary" onClick={() => setConfirmDeleteId(customer.id)}>Excluir</button>
-                    <button className="btn-primary-small">Ver Contratos</button>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => setConfirmDeleteId(customer.id)}
+                      title="Excluir"
+                    >
+                      Excluir
+                    </button>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => setEditingCustomer(customer)}
+                      title="Editar"
+                      style={{ padding: '0 1rem' }}
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button
+                      className="btn-primary-small"
+                      onClick={() => setViewingRentalsCustomer(customer)}
+                    >
+                      Ver Contratos
+                    </button>
                   </>
                 )}
               </div>

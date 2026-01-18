@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { X } from 'lucide-react';
+import { X, Settings2 } from 'lucide-react';
 
 interface EditCarModalProps {
     isOpen: boolean;
@@ -16,7 +16,8 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
         license_plate: '',
         year: 2024,
         daily_rate: 0,
-        status: 'available'
+        status: 'available',
+        image_url: ''
     });
 
     useEffect(() => {
@@ -27,7 +28,8 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
                 license_plate: car.license_plate,
                 year: car.year,
                 daily_rate: car.daily_rate,
-                status: car.status
+                status: car.status,
+                image_url: car.image_url || ''
             });
         }
     }, [car, isOpen]);
@@ -46,6 +48,26 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
         } else {
             alert('Erro ao atualizar veículo: ' + error.message);
         }
+    };
+
+    const handleCarImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `cars/${car.id}_${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('ora-documents')
+            .upload(fileName, file);
+
+        if (uploadError) {
+            alert('Erro ao fazer upload da imagem: ' + uploadError.message);
+            return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage.from('ora-documents').getPublicUrl(fileName);
+        setFormData({ ...formData, image_url: publicUrl });
     };
 
     if (!isOpen || !car) return null;
@@ -82,6 +104,23 @@ export const EditCarModal = ({ isOpen, onClose, onSuccess, car }: EditCarModalPr
                                 value={formData.license_plate}
                                 onChange={e => setFormData({ ...formData, license_plate: e.target.value })}
                             />
+                        </div>
+                        <div className="input-group full-width" style={{ gridColumn: '1 / -1' }}>
+                            <label>Foto do Veículo</label>
+                            <div className="file-input-wrapper" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleCarImageUpload}
+                                    id="edit-car-image-upload"
+                                    style={{ display: 'none' }}
+                                />
+                                <label htmlFor="edit-car-image-upload" className="btn-primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                    <Settings2 size={16} />
+                                    <span>Alterar Imagem</span>
+                                </label>
+                                {formData.image_url && <span style={{ color: 'var(--success)', fontSize: '0.8rem' }}>Imagem atualizada!</span>}
+                            </div>
                         </div>
                         <div className="input-group">
                             <label>Ano</label>

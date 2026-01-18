@@ -18,7 +18,8 @@ const FleetManager = () => {
     license_plate: '',
     year: new Date().getFullYear(),
     daily_rate: 0,
-    status: 'available'
+    status: 'available',
+    image_url: ''
   });
 
   useEffect(() => {
@@ -49,8 +50,28 @@ const FleetManager = () => {
     if (!error) {
       setIsModalOpen(false);
       fetchCars();
-      setNewCar({ brand: '', model: '', license_plate: '', year: new Date().getFullYear(), daily_rate: 0, status: 'available' });
+      setNewCar({ brand: '', model: '', license_plate: '', year: new Date().getFullYear(), daily_rate: 0, status: 'available', image_url: '' });
     }
+  };
+
+  const handleCarImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `cars/${Date.now()}_${Math.random()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('ora-documents')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      alert('Erro ao fazer upload da imagem: ' + uploadError.message);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('ora-documents').getPublicUrl(fileName);
+    setNewCar({ ...newCar, image_url: publicUrl });
   };
 
   const handleDeleteCar = async (id: string) => {
@@ -144,6 +165,23 @@ const FleetManager = () => {
                   <label>Placa</label>
                   <input required placeholder="Ex: ABC-1234" value={newCar.license_plate} onChange={e => setNewCar({ ...newCar, license_plate: e.target.value })} />
                 </div>
+                <div className="input-group full-width" style={{ gridColumn: '1 / -1' }}>
+                  <label>Foto do Veículo</label>
+                  <div className="file-input-wrapper" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCarImageUpload}
+                      id="car-image-upload"
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="car-image-upload" className="btn-secondary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Settings2 size={16} />
+                      <span>Escolher Imagem</span>
+                    </label>
+                    {newCar.image_url && <span style={{ color: 'var(--success)', fontSize: '0.8rem' }}>Imagem carregada!</span>}
+                  </div>
+                </div>
                 <div className="input-group">
                   <label>Ano</label>
                   <input type="number" value={newCar.year} onChange={e => setNewCar({ ...newCar, year: parseInt(e.target.value) })} />
@@ -181,6 +219,7 @@ const FleetManager = () => {
               <div className="car-image-container">
                 <img
                   src={(() => {
+                    if (car.image_url) return car.image_url;
                     const m = car.model.toLowerCase();
                     // Chevrolet Onix (Hatch Prata)
                     if (m.includes('onix')) return 'https://images.unsplash.com/photo-1542362567-b054cc4b3ad3?auto=format&fit=crop&q=80&w=800';

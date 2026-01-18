@@ -27,6 +27,7 @@ const BillingManager = () => {
     const [detailsModalOpen, setDetailsModalOpen] = useState(false);
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
+
     const [paymentMethod, setPaymentMethod] = useState('Pix');
 
     useEffect(() => {
@@ -39,7 +40,7 @@ const BillingManager = () => {
         // Fetch Pending Rentals
         const { data: rentals } = await supabase
             .from('rentals')
-            .select('*, cars(brand, model)')
+            .select('*, cars(brand, model), customers(phone, phone2, full_name)')
             .order('created_at', { ascending: false });
 
         if (rentals) {
@@ -67,11 +68,32 @@ const BillingManager = () => {
         setLoading(false);
     };
 
-    const handleWhatsApp = (rental: any) => {
+    const openWhatsApp = (phone: string, rental: any) => {
         const remaining = (rental.total_amount - rental.paid_amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        const message = `Olá ${rental.customer_name}! Vimos que você possui um saldo pendente de R$ ${remaining} referente ao seu aluguel do ${rental.cars?.model}. Como podemos facilitar o pagamento para você?`;
-        const url = `https://wa.me/${rental.customer_phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+        const customerName = rental.customers?.full_name || rental.customer_name;
+        const model = rental.cars?.model || 'veículo';
+
+        // Mensagem com chave Pix
+        const message = `Olá, ${customerName}! Verificamos um saldo pendente de R$ ${remaining} referente ao aluguel do ${model}.\n\nPara facilitar, segue nossa chave Pix: 92991612904\n\nQualquer dúvida, estamos à disposição!`;
+
+        // Formatar telefone (adicionar 55 se necessário)
+        let cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.length >= 10 && cleanPhone.length <= 11) {
+            cleanPhone = '55' + cleanPhone;
+        }
+
+        const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
+    };
+
+    const handleWhatsApp = (rental: any) => {
+        const phone = rental.customers?.phone || rental.customer_phone;
+
+        if (phone) {
+            openWhatsApp(phone, rental);
+        } else {
+            alert('Nenhum telefone encontrado para este cliente.');
+        }
     };
 
     const openDetails = (rental: any) => {
