@@ -82,8 +82,11 @@ const BillingManager = () => {
             cleanPhone = '55' + cleanPhone;
         }
 
-        const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
+        // Tenta abrir direto no app (protocolo deep link pode ajudar a escolher o app no Android/iOS)
+        const url = `whatsapp://send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+
+        // Fallback or window location - window.open com _blank as vezes bloqueia deep links
+        window.location.href = url;
     };
 
     const handleWhatsApp = (rental: any) => {
