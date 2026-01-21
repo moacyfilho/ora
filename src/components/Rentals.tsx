@@ -17,7 +17,7 @@ const Rentals = () => {
   const fetchRentals = async () => {
     const { data } = await supabase
       .from('rentals')
-      .select('*, cars(model, brand, license_plate, daily_rate), customers(full_name, document_cpf, phone)')
+      .select('*, cars(model, brand, license_plate, daily_rate), customers(full_name, document_cpf, phone, address)')
       .order('created_at', { ascending: false });
 
     if (data) setRentals(data);

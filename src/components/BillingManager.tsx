@@ -40,7 +40,7 @@ const BillingManager = () => {
         // Fetch Pending Rentals
         const { data: rentals } = await supabase
             .from('rentals')
-            .select('*, cars(brand, model), customers(phone, phone2, full_name)')
+            .select('*, cars(brand, model), customers(phone, phone2, full_name, address)')
             .order('created_at', { ascending: false });
 
         if (rentals) {
