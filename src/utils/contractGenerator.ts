@@ -11,10 +11,9 @@ export const generateRentalContract = (rental: any) => {
     // --- Helper Functions ---
 
     const checkPageBreak = (neededHeight: number) => {
-        // Se o espaço necessário exceder a margem inferior (deixando 20mm de margem)
         if (currentY + neededHeight > pageHeight - 20) {
             doc.addPage();
-            currentY = 20; // Reinicia no topo da nova página
+            currentY = 20;
             return true;
         }
         return false;
@@ -52,7 +51,6 @@ export const generateRentalContract = (rental: any) => {
         doc.text(label, marginX + 5, currentY);
 
         doc.setFont('helvetica', 'normal');
-        // Calcula onde o valor começa (um pouco depois do label)
         const labelWidth = doc.getTextWidth(label);
         doc.text(value, marginX + 5 + labelWidth + 2, currentY);
         currentY += 6;
@@ -60,7 +58,7 @@ export const generateRentalContract = (rental: any) => {
 
     const addParagraph = (text: string) => {
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9); // Texto jurídico um pouco menor
+        doc.setFontSize(9);
         doc.setTextColor(0);
 
         const lines = doc.splitTextToSize(text, contentWidth);
@@ -105,9 +103,8 @@ export const generateRentalContract = (rental: any) => {
     addField('Nome:', customerName);
     addField('CPF:', customerDoc);
     addField('Telefone:', customerPhone);
-    // Para endereço longo, usamos splitTextToSize manualmente se necessário, ou assumimos que cabe numa linha por enquanto
-    // Se quiser ser robusto para um endereço muito longo:
-    const addressLines = doc.splitTextToSize(customerAddress, contentWidth - 25); // descontando label
+
+    const addressLines = doc.splitTextToSize(customerAddress, contentWidth - 25);
     if (addressLines.length > 1) {
         doc.setFont('helvetica', 'bold'); doc.text('Endereço:', marginX + 5, currentY);
         doc.setFont('helvetica', 'normal'); doc.text(addressLines, marginX + 25, currentY);
@@ -132,44 +129,51 @@ export const generateRentalContract = (rental: any) => {
     addField('Valor Pago:', `R$ ${rental.paid_amount?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}`);
     currentY += 8;
 
-    // --- Cláusulas Jurídicas Completas ---
+    // --- Cláusulas Jurídicas Blindadas ---
 
     addSectionTitle('4. DO OBJETO');
-    addParagraph('O presente contrato tem como objeto a locação do veículo automotor descrito no item 2, de propriedade do LOCADOR, para uso exclusivo do LOCATÁRIO, sendo vedada a sublocação ou empréstimo a terceiros sem prévia autorização por escrito.');
+    addParagraph('O presente contrato tem como objeto a locação do veículo automotor descrito no item 2, de propriedade do LOCADOR, para uso exclusivo e pessoal do LOCATÁRIO, sendo terminantemente vedada a sublocação, empréstimo, cessão a terceiros ou utilização para transporte clandestino de passageiros ou cargas.');
 
     addSectionTitle('5. DAS OBRIGAÇÕES DO LOCADOR');
-    addParagraph('I - Entregar o veículo ao LOCATÁRIO em perfeitas condições de funcionamento e segurança, com todos os equipamentos exigidos pelo Código de Trânsito Brasileiro.');
-    addParagraph('II - Garantir ao LOCATÁRIO o uso pacífico do veículo durante a vigência do contrato.');
-    addParagraph('III - Prestar assistência em caso de defeito mecânico oriundo do desgaste natural do veículo, desde que não causado por mau uso.');
+    addParagraph('I - Entregar o veículo ao LOCATÁRIO em perfeitas condições de funcionamento, segurança e limpeza.');
+    addParagraph('II - Garantir ao LOCATÁRIO o uso pacífico do veículo durante a vigência do contrato, salvo em casos de reintegração de posse por inadimplemento.');
 
     addSectionTitle('6. DAS OBRIGAÇÕES DO LOCATÁRIO');
-    addParagraph('I - Utilizar o veículo de acordo com as normas de trânsito e para os fins a que se destina, zelando pela sua conservação e limpeza.');
-    addParagraph('II - Não ceder, sublocar ou emprestar o veículo a terceiros sem consentimento expresso do LOCADOR.');
-    addParagraph('III - Devolver o veículo na data estipulada e nas mesmas condições em que o recebeu, ressalvado o desgaste natural pelo uso.');
-    addParagraph('IV - Abastecer o veículo com combustível de boa qualidade.');
-    addParagraph('V - Comunicar imediatamente ao LOCADOR qualquer avaria, acidente ou defeito apresentado pelo veículo.');
+    addParagraph('I - Guardar e zelar pelo veículo como se fosse seu, respondendo por quaisquer danos causados, inclusive arranhões, mossas e rasgos no estofamento.');
+    addParagraph('II - Não ceder a direção do veículo a terceiros não autorizados no contrato.');
+    addParagraph('III - Realizar conferência diária de água e óleo, responsabilizando-se por danos ao motor decorrentes de negligência (fundição de motor).');
+    addParagraph('IV - Comunicar imediatamente ao LOCADOR qualquer anomalia no funcionamento do veículo.');
 
-    addSectionTitle('7. DAS MULTAS E INFRAÇÕES');
-    addParagraph('O LOCATÁRIO declara-se o principal condutor e responsável civil e criminalmente por quaisquer infrações de trânsito ocorridas durante o período de locação. Caso o LOCADOR receba notificação de multa referente ao período, o LOCATÁRIO obriga-se a efetuar o reembolso imediato do valor, bem como a pontuação em sua CNH, se aplicável.');
+    addSectionTitle('7. DA APROPRIAÇÃO INDÉBITA');
+    addParagraph('A não devolução do veículo na data e hora estipuladas, sem comunicação prévia e autorização expressa de prorrogação pelo LOCADOR, por período superior a 24 (vinte e quatro) horas, configurará crime de APROPRIAÇÃO INDÉBITA (Art. 168 do Código Penal). Nesta hipótese, o LOCADOR fica autorizado a promover o bloqueio imediato do veículo, registrar Boletim de Ocorrência policial e requerer judicialmente a Busca e Apreensão, arcando o LOCATÁRIO com todas as custas judiciais, honorários advocatícios e despesas de recuperação do bem.');
 
-    addSectionTitle('8. DO SEGURO E SINISTROS');
-    addParagraph('Em caso de acidente, furto ou roubo, o LOCATÁRIO deverá acionar as autoridades competentes (Boletim de Ocorrência) e comunicar o LOCADOR imediatamente. O LOCATÁRIO será responsável pelo pagamento da franquia do seguro, caso acionado. Se o dano for inferior à franquia, o LOCATÁRIO arcará integralmente com o custo do reparo.');
+    addSectionTitle('8. DO BLOQUEIO E RASTREAMENTO');
+    addParagraph('O LOCATÁRIO declara ter plena ciência de que o veículo locado está equipado com sistema de rastreamento via satélite e dispositivo de bloqueio remoto. O LOCADOR reserva-se o direito de monitorar o deslocamento do veículo e efetuar o bloqueio do funcionamento do motor em casos de: a) Inadimplência superior a 24 horas; b) Saída do perímetro territorial autorizado (se houver); c) Suspeita de fraude ou apropriação indébita; d) Não devolução na data contratada.');
 
-    addSectionTitle('9. DO ATRASO NA DEVOLUÇÃO');
-    addParagraph('A não devolução do veículo na data e hora estipuladas sujeitará o LOCATÁRIO ao pagamento de diárias adicionais, calculadas com base no valor vigente, acrescidas de multa de 10% sobre o valor total do débito, sem prejuízo de o LOCADOR tomar as medidas judiciais cabíveis para reintegração de posse.');
+    addSectionTitle('9. DA DEVOLUÇÃO E HIGIENIZAÇÃO');
+    addParagraph('O veículo deverá ser devolvido com o mesmo nível de combustível verificado na entrega e em condições ideais de limpeza interna e externa. Caso o veículo seja devolvido sujo, será cobrada taxa de lavagem variando de R$ 50,00 a R$ 200,00 (lavagem especial), dependendo do estado. Diferenças de combustível serão cobradas com base no preço de mercado acrescido de taxa de reabastecimento de 20%.');
 
-    addSectionTitle('10. DA RESCISÃO');
-    addParagraph('O presente contrato poderá ser rescindido por qualquer das partes mediante aviso prévio, ou imediatamente em caso de descumprimento de qualquer cláusula aqui estabelecida. O LOCADOR poderá exigir a devolução imediata do veículo se constatar uso indevido.');
+    addSectionTitle('10. DAS MULTAS E INFRAÇÕES');
+    addParagraph('O LOCATÁRIO declara-se o principal condutor e assume total responsabilidade civil, administrativa e criminal por quaisquer infrações de trânsito cometidas durante o período de locação, independentemente de quem estiver na direção. O LOCATÁRIO autoriza o LOCADOR a indicar seu nome como condutor infrator perante os órgãos de trânsito e obriga-se a reembolsar imediatamente o valor das multas, acrescido de 10% a título de taxa administrativa.');
 
-    addSectionTitle('11. DO FORO');
-    addParagraph('As partes elegem o foro da comarca local para dirimir quaisquer dúvidas ou controvérsias oriundas deste contrato, com renúncia expressa a qualquer outro, por mais privilegiado que seja.');
+    addSectionTitle('11. DO SEGURO, SINISTROS E LUCROS CESSANTES');
+    addParagraph('Em caso de colisão, furto, roubo ou incêndio, o LOCATÁRIO deverá comunicar o fato ao LOCADOR imediatamente e providenciar o Boletim de Ocorrência. O LOCATÁRIO será responsável pelo pagamento da franquia do seguro. Além disso, o LOCATÁRIO responderá por LUCROS CESSANTES, comprometendo-se a pagar ao LOCADOR o valor correspondente às diárias de locação pelo período em que o veículo permanecer parado em oficina para reparos ou indisponível para uso, limitado a 30 dias.');
+
+    addSectionTitle('12. DO ATRASO NA DEVOLUÇÃO');
+    addParagraph('O atraso na devolução do veículo implicará na cobrança de diárias adicionais ("pro rata"), acrescidas de multa moratória de 10% sobre o valor total do débito.');
+
+    addSectionTitle('13. DA RESCISÃO');
+    addParagraph('O contrato será rescindido de pleno direito em caso de descumprimento de qualquer de suas cláusulas, falência ou insolvência das partes, ou uso criminoso do veículo, sem prejuízo da cobrança das perdas e danos.');
+
+    addSectionTitle('14. DO FORO');
+    addParagraph('Fica eleito o foro da comarca de domicílio do LOCADOR para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando as partes a qualquer outro, por mais privilegiado que seja.');
 
     currentY += 10;
 
     // Assinaturas
-    checkPageBreak(40); // Garante que as assinaturas não fiquem quebradas ou sozinhas no topo
+    checkPageBreak(40);
 
-    addParagraph('E, por estarem assim justos e contratados, assinam o presente instrumento em duas vias de igual teor.');
+    addParagraph('E, por estarem assim justos e contratados, inclusive quanto às cláusulas de bloqueio e apropriação indébita, assinam o presente instrumento em duas vias.');
     currentY += 15;
 
     // Linhas de assinatura
@@ -188,34 +192,33 @@ export const generateRentalContract = (rental: any) => {
     doc.setFontSize(10);
     doc.text('LOCATÁRIO', 130, signatureY + 5);
     doc.setFontSize(8);
-    // Pode ser que o nome seja longo, vamos truncar ou deixar passar
     const safeCustomerName = customerName.length > 25 ? customerName.substring(0, 25) + '...' : customerName;
     doc.text(safeCustomerName, 130, signatureY + 9);
 
 
-    // Footer em todas as páginas
+    // Footer
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFontSize(8);
         doc.setTextColor(150);
-        doc.text(`Página ${i} de ${totalPages} - Gerado em ${new Date().toLocaleDateString()}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        doc.text(`Página ${i} de ${totalPages} - Gerado em ${new Date().toLocaleDateString()} - ORA Cars Blindado`, pageWidth / 2, pageHeight - 10, { align: 'center' });
     }
 
     // --- Finalização ---
     try {
         const cleanName = (customerName || 'Cliente').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const cleanCar = (rental.cars?.model || 'Carro').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const fileName = `contrato_completo_${cleanName}_${cleanCar}.pdf`;
+        const fileName = `contrato_blindado_${cleanName}_${cleanCar}.pdf`;
 
         doc.save(fileName);
-        alert('Contrato Jurídico COMPLETO (Oficial) gerado com sucesso!');
+        alert('Contrato BLINDADO (Proteção Total) gerado com sucesso!');
     } catch (err) {
         console.error('Erro ao salvar PDF:', err);
         try {
             window.open(doc.output('bloburl'), '_blank');
         } catch (e) {
-            alert('Erro ao gerar PDF. Verifique o console.');
+            alert('Erro ao gerar PDF.');
         }
     }
 };
