@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { X, Calendar, Car } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
 
 interface CustomerRentalsModalProps {
     isOpen: boolean;
@@ -70,7 +71,7 @@ export const CustomerRentalsModal = ({ isOpen, onClose, customer }: CustomerRent
                                     <div className="rental-dates">
                                         <Calendar size={16} className="icon" />
                                         <div>
-                                            <p className="small">{new Date(rental.start_date).toLocaleDateString()} - {new Date(rental.end_date).toLocaleDateString()}</p>
+                                            <p className="small">{formatDate(rental.start_date)} - {formatDate(rental.end_date)}</p>
                                         </div>
                                     </div>
                                     <div className="rental-finance">

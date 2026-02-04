@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { X } from 'lucide-react';
+import { getTodayDate } from '../utils/dateUtils';
 
 interface NewMaintenanceModalProps {
     isOpen: boolean;
@@ -12,7 +13,7 @@ export const NewMaintenanceModal = ({ isOpen, onClose, onSuccess }: NewMaintenan
     const [cars, setCars] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         car_id: '',
-        date: new Date().toISOString().split('T')[0],
+        date: getTodayDate(),
         description: '',
         type: 'preventive',
         cost: 0
@@ -39,7 +40,7 @@ export const NewMaintenanceModal = ({ isOpen, onClose, onSuccess }: NewMaintenan
             onClose();
             setFormData({
                 car_id: '',
-                date: new Date().toISOString().split('T')[0],
+                date: getTodayDate(),
                 description: '',
                 type: 'preventive',
                 cost: 0

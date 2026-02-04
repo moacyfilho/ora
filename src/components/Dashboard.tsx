@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { TrendingUp, Users, Car, AlertCircle } from 'lucide-react';
 import { formatDistanceToNow, subDays, startOfDay, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { parseLocalDate } from '../utils/dateUtils';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -80,7 +81,7 @@ const Dashboard = () => {
         type: 'maintenance',
         title: `MANUTENÇÃO: ${m.cars?.brand} ${m.cars?.model}`,
         subtitle: m.description,
-        date: new Date(m.date)
+        date: parseLocalDate(m.date)
       }))
     ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 5);
 

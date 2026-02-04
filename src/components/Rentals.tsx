@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Search, MoreVertical, CheckCircle, Clock, FileText, Trash2 } from 'lucide-react';
 import { generateRentalContract } from '../utils/contractGenerator';
 import { EditRentalModal } from './EditRentalModal';
+import { formatDate } from '../utils/dateUtils';
 
 const Rentals = () => {
   const [rentals, setRentals] = useState<any[]>([]);
@@ -98,8 +99,8 @@ const Rentals = () => {
                   </td>
                   <td>
                     <div className="period-cell">
-                      <p>{new Date(rental.start_date).toLocaleDateString()}</p>
-                      <p className="to">até {new Date(rental.end_date).toLocaleDateString()}</p>
+                      <p>{formatDate(rental.start_date)}</p>
+                      <p className="to">até {formatDate(rental.end_date)}</p>
                     </div>
                   </td>
                   <td>

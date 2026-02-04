@@ -12,6 +12,7 @@ import {
     X,
     MessageCircle
 } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
 
 const BillingManager = () => {
     const [pendingRentals, setPendingRentals] = useState<any[]>([]);
@@ -234,7 +235,7 @@ const BillingManager = () => {
                                                 <tr key={rental.id} className="animate-fade-in">
                                                     <td data-label="Contrato / Data">
                                                         <p className="bold">#{rental.id.slice(0, 8)}</p>
-                                                        <p className="dim">{new Date(rental.start_date).toLocaleDateString()}</p>
+                                                        <p className="dim">{formatDate(rental.start_date)}</p>
                                                     </td>
                                                     <td data-label="Cliente">
                                                         <p className="bold">{rental.customer_name}</p>
@@ -299,7 +300,7 @@ const BillingManager = () => {
                                     ) : (
                                         completedPayments.map(payment => (
                                             <tr key={payment.id}>
-                                                <td data-label="Data">{new Date(payment.payment_date).toLocaleDateString()}</td>
+                                                <td data-label="Data">{formatDate(payment.payment_date)}</td>
                                                 <td data-label="Cliente">
                                                     <p className="bold">{payment.rentals?.customer_name}</p>
                                                     <p className="dim">{payment.rentals?.cars?.model}</p>
@@ -384,11 +385,11 @@ const BillingManager = () => {
                             <div className="detail-row mt">
                                 <div>
                                     <p className="dim">Início</p>
-                                    <p>{new Date(selectedRental.start_date).toLocaleDateString()}</p>
+                                    <p>{formatDate(selectedRental.start_date)}</p>
                                 </div>
                                 <div>
                                     <p className="dim">Término</p>
-                                    <p>{new Date(selectedRental.end_date).toLocaleDateString()}</p>
+                                    <p>{formatDate(selectedRental.end_date)}</p>
                                 </div>
                             </div>
 

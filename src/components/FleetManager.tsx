@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Car, Plus, Settings2, Trash2, X, Search, User, Clock, CheckCircle } from 'lucide-react';
 import { EditCarModal } from './EditCarModal';
 import { differenceInDays } from 'date-fns';
+import { parseLocalDate } from '../utils/dateUtils';
 
 const FleetManager = () => {
   const [cars, setCars] = useState<any[]>([]);
@@ -280,7 +281,7 @@ const FleetManager = () => {
                     </div>
                     <div className="info-row">
                       <Clock size={14} color="var(--primary)" />
-                      <span>{differenceInDays(new Date(car.activeRental.end_date), new Date())} dias p/ devolução</span>
+                      <span>{differenceInDays(parseLocalDate(car.activeRental.end_date), new Date())} dias p/ devolução</span>
                     </div>
                   </div>
                 )}

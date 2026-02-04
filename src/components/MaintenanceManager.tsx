@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Plus, DollarSign, AlertTriangle, CheckCircle, Trash2, Settings2 } from 'lucide-react';
 import { NewMaintenanceModal } from './NewMaintenanceModal';
 import { EditMaintenanceModal } from './EditMaintenanceModal';
+import { formatDate } from '../utils/dateUtils';
 
 const MaintenanceManager = () => {
     const [logs, setLogs] = useState<any[]>([]);
@@ -91,7 +92,7 @@ const MaintenanceManager = () => {
                         ) : (
                             logs.map((log: any) => (
                                 <tr key={log.id}>
-                                    <td>{new Date(log.date).toLocaleDateString()}</td>
+                                    <td>{formatDate(log.date)}</td>
                                     <td>
                                         <div className="car-cell">
                                             <p>{log.cars?.brand} {log.cars?.model}</p>

@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { formatDate } from './dateUtils';
 
 export const generateRentalContract = (rental: any) => {
     const doc = new jsPDF();
@@ -123,8 +124,8 @@ export const generateRentalContract = (rental: any) => {
 
     // 3. PRAZO E VALORES
     addSectionTitle('3. PRAZO E VALORES');
-    addField('Início:', new Date(rental.start_date).toLocaleDateString());
-    addField('Término:', new Date(rental.end_date).toLocaleDateString());
+    addField('Início:', formatDate(rental.start_date));
+    addField('Término:', formatDate(rental.end_date));
     addField('Valor Total:', `R$ ${rental.total_amount?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
     addField('Valor Pago:', `R$ ${rental.paid_amount?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}`);
     currentY += 8;
@@ -202,7 +203,7 @@ export const generateRentalContract = (rental: any) => {
         doc.setPage(i);
         doc.setFontSize(8);
         doc.setTextColor(150);
-        doc.text(`Página ${i} de ${totalPages} - Gerado em ${new Date().toLocaleDateString()} - ORA Cars Blindado`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        doc.text(`Página ${i} de ${totalPages} - Gerado em ${formatDate(new Date().toISOString())} - ORA Cars Blindado`, pageWidth / 2, pageHeight - 10, { align: 'center' });
     }
 
     // --- Finalização ---
