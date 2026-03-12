@@ -14,6 +14,7 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
         start_date: '',
         end_date: '',
         total_amount: '',
+        deposit_amount: '',
         status: 'active',
         daily_rate: 0
     });
@@ -24,6 +25,7 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                 start_date: rental.start_date.split('T')[0],
                 end_date: rental.end_date.split('T')[0],
                 total_amount: rental.total_amount.toString(),
+                deposit_amount: rental.deposit_amount ? rental.deposit_amount.toString() : '',
                 status: rental.status,
                 daily_rate: rental.cars?.daily_rate || rental.daily_rate || 0
             });
@@ -64,6 +66,7 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                 start_date: formData.start_date,
                 end_date: formData.end_date,
                 total_amount: parseFloat(formData.total_amount),
+                deposit_amount: formData.deposit_amount ? parseFloat(formData.deposit_amount) : 0,
                 status: formData.status
             })
             .eq('id', rental.id);
@@ -125,6 +128,17 @@ export const EditRentalModal = ({ isOpen, onClose, onSuccess, rental }: EditRent
                                 required
                                 value={formData.total_amount}
                                 onChange={e => setFormData({ ...formData, total_amount: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="input-group">
+                            <label>Valor de Caução (R$)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={formData.deposit_amount}
+                                onChange={e => setFormData({ ...formData, deposit_amount: e.target.value })}
+                                placeholder="0.00"
                             />
                         </div>
 

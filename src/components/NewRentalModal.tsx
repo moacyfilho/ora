@@ -19,7 +19,8 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
         daily_rate: '',
         total_amount: '',
         status: 'active',
-        start_mileage: ''
+        start_mileage: '',
+        deposit_amount: ''
     });
 
     useEffect(() => {
@@ -75,7 +76,8 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
             total_amount: parseFloat(formData.total_amount),
             paid_amount: 0,
             status: formData.status,
-            start_mileage: formData.start_mileage ? parseFloat(formData.start_mileage) : null
+            start_mileage: formData.start_mileage ? parseFloat(formData.start_mileage) : null,
+            deposit_amount: formData.deposit_amount ? parseFloat(formData.deposit_amount) : 0
         };
 
         const { error } = await supabase.from('rentals').insert([rentalData]);
@@ -96,7 +98,8 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                 daily_rate: '',
                 total_amount: '',
                 status: 'active',
-                start_mileage: ''
+                start_mileage: '',
+                deposit_amount: ''
             });
         } else {
             alert('Erro ao criar aluguel: ' + error.message);
@@ -194,6 +197,17 @@ export const NewRentalModal = ({ isOpen, onClose, onSuccess }: NewRentalModalPro
                                 required
                                 value={formData.daily_rate}
                                 onChange={e => setFormData({ ...formData, daily_rate: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="input-group">
+                            <label>Valor de Caução (R$)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={formData.deposit_amount}
+                                onChange={e => setFormData({ ...formData, deposit_amount: e.target.value })}
+                                placeholder="0.00"
                             />
                         </div>
 

@@ -1,0 +1,1 @@
+ALTER TABLE rentals ADD COLUMN deposit_amount DECIMAL(10, 2) DEFAULT 0;
