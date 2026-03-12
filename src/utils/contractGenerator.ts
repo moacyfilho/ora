@@ -128,6 +128,7 @@ export const generateRentalContract = (rental: any) => {
     addField('Término:', formatDate(rental.end_date));
     addField('Valor Total:', `R$ ${rental.total_amount?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
     addField('Valor Pago:', `R$ ${rental.paid_amount?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}`);
+    addField('Valor de Caução:', 'R$ ________________________');
     currentY += 8;
 
     // --- Cláusulas Jurídicas Blindadas ---
